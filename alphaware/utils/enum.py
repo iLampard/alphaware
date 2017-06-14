@@ -16,11 +16,11 @@ from six.moves import range
 
 _INTTYPES_MAP = {
     sizeof(t) - 1: t for t in {
-                                c_ubyte,
-                                c_uint,
-                                c_ulong,
-                                c_ulonglong,
-                                c_ushort}
+    c_ubyte,
+    c_uint,
+    c_ulong,
+    c_ulonglong,
+    c_ushort}
 }
 
 _INTTYPES = list(
@@ -63,3 +63,6 @@ def enum(option, *options):
             )
 
     return _enum(*rangeob)
+
+
+FreqType = enum('EOD', 'EOW', 'EOM', 'EOQ', 'EOSY', 'EOY')
