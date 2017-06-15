@@ -16,14 +16,14 @@ def ensure_pd_series(data):
         raise 'Error in ensure_pd_series: {0}'.format(e)
 
 
-@expect_types(date=(str, unicode, datetime))
+@expect_types(date=(str, datetime))
 def ensure_pyfin_date(date, date_format='%Y-%m-%d'):
     """
-    :param date: str, unicode, datetime, 日期
+    :param date: str, datetime, 日期
     :param date_format: str, 时间格式
     :return: PyFin.Date object 
     """
-    if isinstance(date, str) or isinstance(date, unicode):
+    if isinstance(date, str):
         return Date.strptime(date, date_format)
     else:
         return Date.fromDateTime(date)
