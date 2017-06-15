@@ -6,9 +6,9 @@ import pandas as pd
 from pandas import (MultiIndex,
                     Index)
 from pandas.util.testing import assert_frame_equal
-from ...utils import (OutputDataFormat,
-                      convert_df_format,
-                      MULTI_INDEX_NAMES)
+from alphaware.enums import OutputDataFormat
+from alphaware.const import MULTI_INDEX_NAMES
+from alphaware.utils import convert_df_format
 
 
 class TestPandasUtils(TestCase):
@@ -33,10 +33,8 @@ class TestPandasUtils(TestCase):
           OutputDataFormat.PITVOT_TABLE_DF,
           ['factor'],
           MULTI_INDEX_NAMES,
-          pd.DataFrame({'001': [1, 2, 3], '002': [2, 3, 4]},
+          pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
                        index=Index(['2014', '2015', '2016'], name='tradeDate')))])
     def test_convert_df_format_2(self, data, target_format, col_name, index_name, expected):
         calculated = convert_df_format(data, target_format, col_name, index_name)
-        print calculated
-        print expected
         assert_frame_equal(calculated, expected)

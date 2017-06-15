@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import pandas as pd
-import numpy as np
 from datetime import datetime
+
+import numpy as np
+import pandas as pd
 from PyFin.DateUtilities import (Calendar,
                                  Date,
                                  Period,
                                  Schedule)
 from PyFin.Enums import (BizDayConventions,
                          Weekdays)
-from argcheck import (expect_types,
-                      expect_element,
-                      optional)
+from argcheck import (expect_types)
+
+from alphaware.enums import FreqType
 from .input_validation import (ensure_pd_series,
                                ensure_pyfin_date)
-from .enums import FreqType
 
 
 @expect_types(date_series=(list, pd.Series, np.ndarray))

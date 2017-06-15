@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from enum import (IntEnum, unique, Enum)
+from enum import (IntEnum,
+                  unique,
+                  Enum)
 
 
 class StrEnum(str, Enum):
