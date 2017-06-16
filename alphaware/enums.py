@@ -10,6 +10,14 @@ class StrEnum(str, Enum):
 
 
 @unique
+class NAStrategy(StrEnum):
+    MEAN = 'mean'
+    MEDIAN = 'median'
+    MOST_FREQ = 'most_frequent'
+    CUSTOM = 'custom'
+
+
+@unique
 class FreqType(StrEnum):
     EOD = 'D'
     EOW = 'W'

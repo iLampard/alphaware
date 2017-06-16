@@ -7,13 +7,13 @@ from alphaware.enums import OutputDataFormat
 
 
 @expect_types(data=(pd.Series, pd.DataFrame))
-def convert_df_format(data, target_format=OutputDataFormat.MULTI_INDEX_DF, col_name=list('factor'),
+def convert_df_format(data, target_format=OutputDataFormat.MULTI_INDEX_DF, col_name='factor',
                       index_name=MULTI_INDEX_NAMES):
     if target_format == OutputDataFormat.MULTI_INDEX_DF:
         tmp = data.stack()
         data_ = pd.DataFrame(tmp)
         data_.index.names = index_name
-        data_.columns = col_name
+        data_.columns = [col_name]
     else:
         tmp = data.unstack()
         index = tmp.index
