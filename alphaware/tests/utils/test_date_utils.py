@@ -8,8 +8,8 @@ from pandas.util.testing import assert_series_equal
 from PyFin.Enums import (BizDayConventions,
                          Weekdays)
 from alphaware.utils import (map_to_biz_day,
-                             get_tiaocang_date,
-                             FreqType)
+                             get_tiaocang_date)
+from alphaware.enums import FreqType
 
 
 class TestDateUtils(TestCase):
@@ -31,7 +31,7 @@ class TestDateUtils(TestCase):
                             FreqType.EOM,
                             'China.SSE',
                             '%Y-%m-%d',
-                            [dt(2016, 1, 29), dt(2016, 2, 29), dt(2016, 3, 29)]),
+                            [dt(2016, 1, 29), dt(2016, 2, 29), dt(2016, 3, 31)]),
                            ('2017-01-01',
                             '2017-02-01',
                             FreqType.EOW,
@@ -43,9 +43,14 @@ class TestDateUtils(TestCase):
                             FreqType.EOY,
                             'China.SSE',
                             '%Y/%m/%d',
-                            [dt(2016, 12, 30)])
+                            [dt(2016, 12, 30)]),
+                           (dt(2014, 1, 1),
+                            dt(2014, 3, 31),
+                            FreqType.EOM,
+                            'China.SSE',
+                            '%Y/%m/%d',
+                            [dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)])
                            ])
     def test_get_tiaocang_date(self, start_date, end_date, freq, calendar, date_format, expected):
         calculated = get_tiaocang_date(start_date, end_date, freq, calendar, date_format)
-        print calculated
         self.assertEqual(calculated, expected)

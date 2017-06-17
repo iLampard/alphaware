@@ -52,22 +52,20 @@ def get_tiaocang_date(start_date, end_date, freq=FreqType.EOM, calendar='China.S
     end_date = ensure_pyfin_date(end_date, date_format)
 
     cal = Calendar(calendar)
-
-    if freq.upper() == FreqType.EOW:
-        start_date = Date.nextWeekday(start_date, Weekdays.Friday)
-        end_date = Date.nextWeekday(end_date, Weekdays.Friday)
-    elif freq.upper() == FreqType.EOM:
-        start_date = cal.endOfMonth(start_date)
-        end_date = cal.endOfMonth(end_date)
-    elif freq.upper() == FreqType.EOY:
-        start_date = Date(start_date.year(), 1, 1)
-        end_date = Date(end_date.year(), 12, 31)
-
     tiaocang_date = Schedule(start_date,
                              end_date,
                              Period('1' + freq),
                              cal,
-                             BizDayConventions.Preceding)
+                             BizDayConventions.Unadjusted)
 
-    tiaocang_date = [date.toDateTime() for date in tiaocang_date[:-1] if start_date <= date <= end_date]
-    return tiaocang_date
+    if freq.upper() == FreqType.EOW:
+        tiaocang_date = [Date.nextWeekday(date, Weekdays.Friday) for date in tiaocang_date]
+    elif freq.upper() == FreqType.EOM:
+        tiaocang_date = [cal.endOfMonth(date) for date in tiaocang_date]
+    elif freq.upper() == FreqType.EOY:
+        tiaocang_date = [Date(date.year(), 12, 31) for date in tiaocang_date]
+
+    tiaocang_date = [cal.adjustDate(date, BizDayConventions.Preceding).toDateTime() for date in tiaocang_date if
+                     start_date <= date <= end_date]
+
+    return sorted(set(tiaocang_date))

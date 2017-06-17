@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from .factor import Factor
+from .factor_container import (Factor,
+                               FactorContainer)
 
-__all__ = ['Factor']
+__all__ = ['Factor',
+           'FactorContainer']
