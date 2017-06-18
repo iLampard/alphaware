@@ -92,7 +92,7 @@ class Factor(object):
 
 
 class FactorContainer(object):
-    def __init__(self, start_date, end_date, factors=None, freq=FreqType.EOM, **kwargs):
+    def __init__(self, start_date=None, end_date=None, factors=None, freq=FreqType.EOM, **kwargs):
         self.start_date = start_date
         self.end_date = end_date
         self.freq = freq
@@ -103,8 +103,13 @@ class FactorContainer(object):
         self.property = defaultdict(str)
         self.data = pd.DataFrame()
 
+        self._validate_tiaocang_date()
         self._update_tiaocang_date()
         self._merge_factors(factors)
+
+    def _validate_tiaocang_date(self):
+        if (self.start_date is None or self.end_date is None) and self._tiaocang_date is None:
+            raise ValueError('tiaocang date must be set initially')
 
     def _update_tiaocang_date(self):
         if self._tiaocang_date is None:
@@ -184,3 +189,13 @@ class FactorContainer(object):
     @property
     def container_property(self):
         return self.property
+
+
+@expect_types(factor=(Factor, FactorContainer))
+def ensure_factor_container(factor):
+    if isinstance(FactorContainer):
+        return factor
+    else:
+        fc = FactorContainer(tiaocang_date=factor.trade_date_list)
+        fc.add_factor(factor)
+        return fc
