@@ -86,10 +86,6 @@ class Factor(object):
 
         return ret
 
-    @property
-    def factor_data(self):
-        return self.data
-
 
 class FactorContainer(object):
     def __init__(self, start_date=None, end_date=None, factors=None, freq=FreqType.EOM, **kwargs):
@@ -166,7 +162,7 @@ class FactorContainer(object):
 
     @expect_types(factor=Factor)
     def add_factor(self, factor, overwrite=False):
-        if overwrite:
+        if overwrite is True:
             self.remove_factor(factor.name)
         self._merge_factor(factor)
         self.data = self.data.loc[self._tiaocang_date]
@@ -191,11 +187,10 @@ class FactorContainer(object):
         return self.property
 
 
-@expect_types(factor=(Factor, FactorContainer))
-def ensure_factor_container(factor):
-    if isinstance(FactorContainer):
-        return factor
+def ensure_factor_container(func, argname, arg):
+    if isinstance(arg, FactorContainer):
+        return arg
     else:
-        fc = FactorContainer(tiaocang_date=factor.trade_date_list)
-        fc.add_factor(factor)
+        fc = FactorContainer(tiaocang_date=arg.trade_date_list)
+        fc.add_factor(arg)
         return fc

@@ -1,38 +1,55 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from PyFin.Utilities import pyFinAssert
-from argcheck import (coerce,
-                      preprocess)
+import pandas as pd
+from sklearn_pandas import DataFrameMapper
+from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
-from .factor_container import (Factor,
-                               ensure_factor_container)
+from sklearn.utils.validation import FLOAT_DTYPES
+from .factor_estimator import FactorEstimator
+from ..enums import FactorType
 
 
-def winsorize(x, quantile_range=(2.5, 97.5)):
-    """ 
-    :param x: pd.Series, 原始数据(如截面因子)
-    :param quantile_range: tuple (q_min, q_max), 0.0 < q_min < q_max < 100.0, 去掉分位数在(q_min, q_max)的数据
-    :return: pd.Series, 去极值化后的数据
-    """
-    q_min, q_max = quantile_range
-    pyFinAssert(0.0 <= q_min < q_max <= 100.0, ValueError, 'Invalid quantile range: %s' % str(quantile_range))
-    q = np.percentile(x, quantile_range, axis=0)
-    ret = x[x <= q[1]]
-    ret = ret[ret >= q[0]]
-    return ret
-
-
-class FactorWinsorizer(BaseEstimator, TransformerMixin):
+class Winsorizer(BaseEstimator, TransformerMixin):
     def __init__(self, quantile_range=(2.5, 97.5), copy=True):
         self.quantile_range = quantile_range
         self.copy = copy
+        self.q_max = None
+        self.q_min = None
 
-    @preprocess(factor_containter=coerce(type(Factor), ensure_factor_container))
-    def fit(self, factor_containter):
-        pass
+    def fit(self, X):
+        q = np.percentile(X, self.quantile_range, axis=0)
+        self.q_max = q[1]
+        self.q_min = q[0]
+        return self
 
-    @preprocess(factor_containter=coerce(type(Factor), ensure_factor_container))
-    def transform(self, factor_containter):
-        pass
+    def transform(self, X):
+        X = check_array(X, accept_sparse=('csr', 'csc'), copy=self.copy,
+                        ensure_2d=False, estimator=self, dtype=FLOAT_DTYPES)
+        X[X > self.q_max] = self.q_max
+        X[X < self.q_min] = self.q_min
+        return X
+
+
+class FactorWinsorizer(FactorEstimator):
+    def __init__(self, quantile_range=(2.5, 97.5), copy=True, groupby_date=True):
+        super(FactorWinsorizer, self).__init__(copy=copy, groupby_date=groupby_date)
+        self.quantile_range = quantile_range
+        self.q_max = None
+        self.q_min = None
+
+    def _build_imputer_mapper(self, factor_container):
+        """
+        https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
+        """
+        data = factor_container.data
+        data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
+                       for factor_name in data.columns]
+        return DataFrameMapper(data_mapper)
+
+    def _get_imputer(self, factor_type):
+        if factor_type == FactorType.INDUSTY_CODE:
+            return None
+        elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:
+            return Winsorizer(quantile_range=self.quantile_range, copy=self.copy)
