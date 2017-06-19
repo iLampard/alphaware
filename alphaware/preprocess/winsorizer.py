@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import pandas as pd
 from sklearn_pandas import DataFrameMapper
 from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
@@ -40,9 +39,6 @@ class FactorWinsorizer(FactorEstimator):
         self.q_min = None
 
     def _build_imputer_mapper(self, factor_container):
-        """
-        https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
-        """
         data = factor_container.data
         data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]

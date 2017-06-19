@@ -2,7 +2,7 @@
 
 import copy
 import pandas as pd
-import numpy as np
+from toolz import get_in
 from collections import defaultdict
 from toolz.dicttoolz import (merge,
                              dissoc)
@@ -185,6 +185,20 @@ class FactorContainer(object):
     @property
     def container_property(self):
         return self.property
+
+    @property
+    def industry_code(self):
+        for key in self.property:
+            if self.property[key]['type'] == FactorType.INDUSTY_CODE:
+                return self.data[key]
+        return None
+
+    @property
+    def mkt_cap(self):
+        for key in self.property:
+            if self.property[key]['type'] == FactorType.ALPHA_FACTOR_MV:
+                return self.data[key]
+        return None
 
 
 def ensure_factor_container(func, argname, arg):

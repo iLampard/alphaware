@@ -8,6 +8,7 @@ from .imputer import (ExtCategoricalImputer,
                       FactorImputer)
 from .winsorizer import (Winsorizer,
                          FactorWinsorizer)
+from .standardizer import FactorStandardizer
 
 __all__ = ['Factor',
            'FactorContainer',
@@ -15,4 +16,5 @@ __all__ = ['Factor',
            'ExtCategoricalImputer',
            'FactorImputer',
            'Winsorizer',
-           'FactorWinsorizer']
+           'FactorWinsorizer',
+           'FactorStandardizer']
