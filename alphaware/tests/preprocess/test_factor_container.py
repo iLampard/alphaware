@@ -27,7 +27,7 @@ class TestFactorContainter(TestCase):
         factor_data_expected = pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
                                             index=pd.Index([dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)],
                                                            name='tradeDate'))
-        assert_frame_equal(factor.factor_data, factor_data_expected)
+        assert_frame_equal(factor.data, factor_data_expected)
 
     def test_factor_2(self):
         data = pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
@@ -47,7 +47,7 @@ class TestFactorContainter(TestCase):
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)], ['001', '002']],
                                            names=['tradeDate', 'secID'])
         factor_data_expected = pd.DataFrame(index=index, data=[1, 2, 3, 4, 5, 6], columns=['test'])
-        assert_frame_equal(factor.factor_data, factor_data_expected)
+        assert_frame_equal(factor.data, factor_data_expected)
 
     def test_factor_containter_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],

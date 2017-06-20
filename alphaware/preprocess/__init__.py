@@ -9,6 +9,9 @@ from .imputer import (ExtCategoricalImputer,
 from .winsorizer import (Winsorizer,
                          FactorWinsorizer)
 from .standardizer import FactorStandardizer
+from .neutralizer import (get_indicator_matrix,
+                          Neutralizer,
+                          FactorNeutralizer)
 
 __all__ = ['Factor',
            'FactorContainer',
@@ -17,4 +20,7 @@ __all__ = ['Factor',
            'FactorImputer',
            'Winsorizer',
            'FactorWinsorizer',
-           'FactorStandardizer']
+           'FactorStandardizer',
+           'get_indicator_matrix',
+           'Neutralizer',
+           'FactorNeutralizer']

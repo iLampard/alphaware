@@ -13,7 +13,7 @@ class FactorStandardizer(FactorEstimator):
         self.with_mean = with_mean
         self.with_std = with_std
 
-    def _build_imputer_mapper(self, factor_container):
+    def _build_imputer_mapper(self, factor_container, **kwargs):
         data = factor_container.data
         data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]

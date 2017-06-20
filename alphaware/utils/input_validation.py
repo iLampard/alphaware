@@ -3,6 +3,7 @@
 
 import pandas as pd
 from datetime import datetime
+import numpy as np
 from argcheck import expect_types
 from PyFin.DateUtilities import Date
 
@@ -42,3 +43,14 @@ def ensure_datetime(date, date_format='%Y-%m-%d'):
         return date
     else:
         return datetime.strptime(date, date_format)
+
+
+@expect_types(arg=(np.ndarray, pd.DataFrame, pd.Series))
+def ensure_np_array(func, argname, arg):
+    """
+    :return: 转换成np.ndarray格式
+    """
+    if isinstance(arg, np.ndarray):
+        return arg
+    else:
+        return arg.values

@@ -16,11 +16,11 @@ class FactorEstimator(BaseEstimator, TransformerMixin):
         self.df_mapper = None
 
     @preprocess(factor_container=ensure_factor_container)
-    def fit(self, factor_container):
-        self.df_mapper = self._build_imputer_mapper(factor_container)
+    def fit(self, factor_container, **kwargs):
+        self.df_mapper = self._build_imputer_mapper(factor_container, **kwargs)
         return self
 
-    def _build_imputer_mapper(self, factor_container):
+    def _build_imputer_mapper(self, factor_container, **kwargs):
         """
         https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
         """
@@ -34,7 +34,8 @@ class FactorEstimator(BaseEstimator, TransformerMixin):
             imputer_data_agg = self.df_mapper.fit_transform(factor_container.data)
         else:
             tiaocang_date = factor_container.tiaocang_date
-            imputer_data = [self.df_mapper.fit_transform(factor_container.data.loc[date_]) for date_ in tiaocang_date]
+            imputer_data = [self.df_mapper.fit_transform(factor_container.data.loc[date_]) for date_ in
+                            tiaocang_date]
             imputer_data_agg = np.vstack(imputer_data)
         factor_container.data = pd.DataFrame(imputer_data_agg,
                                              index=factor_container.data.index,

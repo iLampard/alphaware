@@ -4,10 +4,12 @@ from unittest import TestCase
 from parameterized import parameterized
 import pandas as pd
 import numpy as np
+from numpy.testing.utils import assert_array_equal
 from PyFin.DateUtilities import Date
 from pandas.util.testing import assert_series_equal
 from alphaware.utils import (ensure_pd_series,
-                             ensure_pyfin_date)
+                             ensure_pyfin_date,
+                             ensure_np_array)
 
 
 class TestInputValidation(TestCase):
@@ -25,3 +27,10 @@ class TestInputValidation(TestCase):
     def test_ensure_pyfin_date(self, data, date_format, expected):
         calculated = ensure_pyfin_date(data, date_format)
         self.assertEqual(calculated, expected)
+
+    @parameterized.expand([(None, None, pd.Series([1, 2, 3]), np.array([1, 2, 3])),
+                           (None, None, pd.DataFrame([[1, 2, 3], [2, 3, 4]]), np.array([[1, 2, 3], [2, 3, 4]])),
+                           (None, None, np.array([1, 2, 3]), np.array([1, 2, 3]))])
+    def test_ensure_np_array(self, func, argname, data, expected):
+        calculated = ensure_np_array(func, argname, data)
+        assert_array_equal(calculated, expected)
