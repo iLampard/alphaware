@@ -2,16 +2,18 @@
 
 import copy
 import pandas as pd
-from toolz import get_in
+import numpy as np
 from collections import defaultdict
 from toolz.dicttoolz import (merge,
                              dissoc)
 from PyFin.Utilities import pyFinAssert
 from argcheck import (expect_types,
-                      optional)
+                      optional,
+                      preprocess)
 from ..utils import (ensure_datetime,
                      convert_df_format,
-                     get_tiaocang_date)
+                     get_tiaocang_date,
+                     ensure_np_array)
 from ..enums import (FreqType,
                      FactorType,
                      OutputDataFormat,
@@ -199,6 +201,11 @@ class FactorContainer(object):
             if self.property[key]['type'] == FactorType.ALPHA_FACTOR_MV:
                 return self.data[key]
         return None
+
+    @preprocess(data_=ensure_np_array)
+    def replace_data(self, data_):
+        self.data = pd.DataFrame(data_, index=self.data.index, columns=self.data.columns)
+        return
 
 
 def ensure_factor_container(func, argname, arg):

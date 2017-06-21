@@ -2,6 +2,7 @@
 
 from unittest import TestCase
 import pandas as pd
+import numpy as np
 from pandas.util.testing import assert_frame_equal
 from datetime import datetime as dt
 from ...preprocess import (Factor,
@@ -87,3 +88,8 @@ class TestFactorContainter(TestCase):
                                   'norm_type': FactorNormType.Null,
                                   'freq': FreqType.EOM}}
         self.assertEqual(fc.property, property_exp)
+
+        fc.replace_data(np.array([[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 5.0]]).T)
+        assert_frame_equal(fc.data,
+                           pd.DataFrame({'test1': [1.0, 2.0, 3.0, 4.0], 'test3': [1.0, 2.0, 3.0, 5.0]}, index=index_exp))
+
