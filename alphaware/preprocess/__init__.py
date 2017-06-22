@@ -4,6 +4,7 @@
 from .factor_container import (Factor,
                                FactorContainer,
                                ensure_factor_container)
+from .factor_transformer import FactorTransformer
 from .imputer import (ExtCategoricalImputer,
                       FactorImputer)
 from .winsorizer import (Winsorizer,
@@ -16,6 +17,7 @@ from .neutralizer import (get_indicator_matrix,
 __all__ = ['Factor',
            'FactorContainer',
            'ensure_factor_container',
+           'FactorTransformer',
            'ExtCategoricalImputer',
            'FactorImputer',
            'Winsorizer',

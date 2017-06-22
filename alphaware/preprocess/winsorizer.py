@@ -6,7 +6,7 @@ from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
 from sklearn.utils.validation import FLOAT_DTYPES
-from .factor_estimator import FactorEstimator
+from .factor_transformer import FactorTransformer
 from ..enums import FactorType
 
 
@@ -31,14 +31,14 @@ class Winsorizer(BaseEstimator, TransformerMixin):
         return X
 
 
-class FactorWinsorizer(FactorEstimator):
-    def __init__(self, quantile_range=(2.5, 97.5), copy=True, groupby_date=True):
-        super(FactorWinsorizer, self).__init__(copy=copy, groupby_date=groupby_date)
+class FactorWinsorizer(FactorTransformer):
+    def __init__(self, quantile_range=(2.5, 97.5), copy=True, groupby_date=True, out_container=False):
+        super(FactorWinsorizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
         self.quantile_range = quantile_range
         self.q_max = None
         self.q_min = None
 
-    def _build_imputer_mapper(self, factor_container, **kwargs):
+    def _build_imputer_mapper(self, factor_container):
         data = factor_container.data
         data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]

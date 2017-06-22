@@ -9,12 +9,11 @@ from sklearn.base import (BaseEstimator,
 from sklearn.linear_model import LinearRegression
 from argcheck import (preprocess,
                       optionally)
-from .factor_estimator import FactorEstimator
+from .factor_transformer import FactorTransformer
 from .factor_container import ensure_factor_container
 from ..utils import ensure_np_array
 from ..enums import (FactorType,
                      FactorNormType)
-from ..const import MULTI_INDEX_NAMES
 
 
 @preprocess(industry_code=ensure_np_array, mkt_cap=optionally(ensure_np_array))
@@ -63,9 +62,9 @@ class Neutralizer(BaseEstimator, TransformerMixin):
         return np.asmatrix(residues).A1
 
 
-class FactorNeutralizer(FactorEstimator):
-    def __init__(self, copy=True, groupby_date=True):
-        super(FactorNeutralizer, self).__init__(copy=copy, groupby_date=groupby_date)
+class FactorNeutralizer(FactorTransformer):
+    def __init__(self, copy=True, groupby_date=True, out_container=False):
+        super(FactorNeutralizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
 
     def _build_imputer_mapper(self, factor_container, **kwargs):
         data_mapper_by_date = pd.Series()
@@ -93,7 +92,7 @@ class FactorNeutralizer(FactorEstimator):
                 return Neutralizer(industry_code)
 
     @preprocess(factor_container=ensure_factor_container)
-    def transform(self, factor_container):
+    def transform(self, factor_container, **kwargs):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
         if not self.groupby_date:
@@ -106,4 +105,7 @@ class FactorNeutralizer(FactorEstimator):
         factor_container.data = pd.DataFrame(imputer_data_agg,
                                              index=factor_container.data.index,
                                              columns=factor_container.data.columns)
-        return factor_container.data
+        if self.out_container:
+            return factor_container
+        else:
+            return factor_container.data

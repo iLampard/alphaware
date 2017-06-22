@@ -5,22 +5,28 @@ import numpy as np
 import pandas as pd
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
-from argcheck import preprocess
+from argcheck import (preprocess,
+                      expect_types)
 from .factor_container import ensure_factor_container
 
 
-class FactorEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, copy=True, groupby_date=True):
+class FactorTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, copy=True, groupby_date=True, out_container=False):
         self.groupby_date = groupby_date
         self.copy = copy
         self.df_mapper = None
+        self.out_container = out_container
+
+    @expect_types(out=bool)
+    def set_out_container(self, out):
+        self.out_container = out
 
     @preprocess(factor_container=ensure_factor_container)
     def fit(self, factor_container, **kwargs):
-        self.df_mapper = self._build_imputer_mapper(factor_container, **kwargs)
+        self.df_mapper = self._build_imputer_mapper(factor_container)
         return self
 
-    def _build_imputer_mapper(self, factor_container, **kwargs):
+    def _build_imputer_mapper(self, factor_container):
         """
         https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
         """
@@ -40,4 +46,7 @@ class FactorEstimator(BaseEstimator, TransformerMixin):
         factor_container.data = pd.DataFrame(imputer_data_agg,
                                              index=factor_container.data.index,
                                              columns=factor_container.data.columns)
-        return factor_container.data
+        if self.out_container:
+            return factor_container
+        else:
+            return factor_container.data

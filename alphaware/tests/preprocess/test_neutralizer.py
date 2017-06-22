@@ -119,3 +119,7 @@ class TestNeutralizer(TestCase):
                                 index=index,
                                 dtype=object)
         assert_frame_equal(calculated, expected)
+
+        calculated = FactorNeutralizer(out_container=True).fit_transform(fc)
+        assert_frame_equal(calculated.data, expected)
+        self.assertEqual(calculated.container_property, fc.container_property)

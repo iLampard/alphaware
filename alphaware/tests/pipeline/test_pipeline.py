@@ -8,13 +8,15 @@ except ImportError:
     from mock import patch
 
 from unittest import TestCase
+import copy
 from datetime import datetime as dt
 import pandas as pd
-from pandas.util.testing import assert_series_equal
+from pandas.util.testing import assert_frame_equal
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
-from alphaware.preprocess import (Factor,
-                                  FactorContainer)
+from alphaware.preprocess import (FactorTransformer,
+                                  FactorContainer,
+                                  Factor)
 from alphaware.pipeline import AlphaPipeline
 from alphaware.enums import (FactorType,
                              FactorNormType)
@@ -45,10 +47,15 @@ class TransDiv4(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, x):
-        return x.data / 4
+        x = copy.deepcopy(x)
+        for factor in x.data.columns:
+            if x.property[factor]['type'] == FactorType.ALPHA_FACTOR:
+                x.data[factor] /= 4.0
+
+        return x.data
 
 
-class TransMulti2(BaseEstimator, TransformerMixin):
+class TransMulti2(FactorTransformer):
     """
     Transformer with fit and transform methods
     """
@@ -57,7 +64,14 @@ class TransMulti2(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, x):
-        return x.data * 2
+        x = copy.deepcopy(x)
+        for factor in x.data.columns:
+            if x.property[factor]['type'] == FactorType.ALPHA_FACTOR:
+                x.data[factor] *= 2.0
+        if self.out_container:
+            return x
+        else:
+            return x.data
 
 
 class TestPipeline(TestCase):
@@ -90,6 +104,28 @@ class TestPipeline(TestCase):
 
     def test_factor_tranformer(self):
         pipeline = AlphaPipeline([('multi', TransMulti2()),
-                                    ('div', TransDiv4())])
+                                  ('div', TransDiv4())])
         calculated = pipeline.fit_transform(self.factor_container)
-        print calculated
+        index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
+                                           names=['tradeDate', 'secID'])
+        expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
+                                 'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
+                                 'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
+                                 'test4': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55]},
+                                index=index,
+                                dtype=object)
+        assert_frame_equal(calculated, expected)
+
+    def test_factor_tranformer_2(self):
+        pipeline = AlphaPipeline([('multi', TransMulti2()),
+                                  ('div', TransDiv4())])
+        pipeline.set_params(multi__out_container=True)
+        calculated = pipeline.fit_transform(self.factor_container)
+        index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
+                                           names=['tradeDate', 'secID'])
+        expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
+                                 'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
+                                 'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
+                                 'test4': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55]},
+                                index=index)
+        assert_frame_equal(calculated, expected)

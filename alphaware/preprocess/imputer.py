@@ -10,7 +10,7 @@ from sklearn_pandas import (CategoricalImputer,
                             DataFrameMapper)
 from ..enums import (NAStrategy,
                      FactorType)
-from factor_estimator import FactorEstimator
+from factor_transformer import FactorTransformer
 
 
 def _get_mask(X, value):
@@ -59,7 +59,7 @@ class ExtCategoricalImputer(CategoricalImputer):
         return np.asarray(X)
 
 
-class FactorImputer(FactorEstimator):
+class FactorImputer(FactorTransformer):
     def __init__(self,
                  missing_value='NaN',
                  numerical_strategy=NAStrategy.MEAN,
@@ -68,8 +68,9 @@ class FactorImputer(FactorEstimator):
                  copy=True,
                  custom_value=None,
                  categorical_strategy=NAStrategy.MOST_FREQ,
-                 groupby_date=True):
-        super(FactorImputer, self).__init__(copy=copy, groupby_date=groupby_date)
+                 groupby_date=True,
+                 out_container=False):
+        super(FactorImputer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
         self.missing_values = missing_value
         self.copy = copy
         self.numerical_strategy = numerical_strategy

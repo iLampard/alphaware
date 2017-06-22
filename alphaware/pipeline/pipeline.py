@@ -1,10 +1,7 @@
-from PyFin.Utilities import (pyFinWarning,
-                             pyFinAssert)
-from sklearn.pipeline import (_name_estimators,
-                              Pipeline)
+# -*- coding: utf-8 -*-
+from sklearn.pipeline import Pipeline
 from sklearn.utils import tosequence
 import six
-import copy
 from sklearn_pandas.pipeline import _call_fit
 from ..preprocess import FactorContainer
 
@@ -52,7 +49,10 @@ class AlphaPipeline(Pipeline):
             else:
                 fc_fit = _call_fit(transform.fit,
                                    fc, y, **fit_params_steps[name]).transform(fc)
-            fc.replace_data(fc_fit)
+            if not isinstance(fc_fit, FactorContainer):
+                fc.replace_data(fc_fit)
+            else:
+                fc = fc_fit
 
         return fc, fit_params_steps[self.steps[-1][0]]
 
@@ -65,7 +65,7 @@ class AlphaPipeline(Pipeline):
         fc_fit, fit_params = self._pre_transform(factor_container, y, **fit_params)
         if hasattr(self.steps[-1][-1], "fit_transform"):
             return _call_fit(self.steps[-1][-1].fit_transform,
-                             factor_container, y, **fit_params)
+                             fc_fit, y, **fit_params)
         else:
             return _call_fit(self.steps[-1][-1].fit,
-                             factor_container, y, **fit_params).transform(factor_container)
+                             fc_fit, y, **fit_params).transform(fc_fit)

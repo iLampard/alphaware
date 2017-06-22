@@ -45,3 +45,4 @@ class TestWinsorizer(TestCase):
                                  'test3': [3.0, 3.0, 3.0, 3.0, 3.0, 5.90396, 5.90396, 5.90396, 5.90396, 5.90004]},
                                 index=index)
         assert_frame_equal(calculated, expected)
+
