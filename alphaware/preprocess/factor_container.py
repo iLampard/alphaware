@@ -13,12 +13,13 @@ from argcheck import (expect_types,
 from ..utils import (ensure_datetime,
                      convert_df_format,
                      get_tiaocang_date,
-                     ensure_np_array)
+                     ensure_np_array,
+                     ensure_pd_index_names)
 from ..enums import (FreqType,
                      FactorType,
                      OutputDataFormat,
                      FactorNormType)
-from ..const import MULTI_INDEX_NAMES
+from ..const import MULTI_INDEX_FACTOR
 
 _REQUIRED_FACTOR_PROPERTY = {'type': FactorType.ALPHA_FACTOR,
                              'data_format': OutputDataFormat.MULTI_INDEX_DF,
@@ -37,8 +38,6 @@ class Factor(object):
         self.data = copy.deepcopy(data)
         self.name = name
         self.property = update_factor_property(property_dict)
-        self.date_index_name = kwargs.get('date_index_name', MULTI_INDEX_NAMES[0])
-        self.sec_index_name = kwargs.get('sec_index_name', MULTI_INDEX_NAMES[1])
         self.production_data_format = kwargs.get('production_data_format', OutputDataFormat.MULTI_INDEX_DF)
 
         self._validate_data_format()
@@ -56,15 +55,18 @@ class Factor(object):
         return
 
     def _validate_date_index(self):
+        self.data = ensure_pd_index_names(self.data,
+                                          data_format=self.production_data_format,
+                                          valid_index=MULTI_INDEX_FACTOR)
         date_format = self.property.get('date_format', '%Y-%m-%d')
-        date_index = self.data.index.get_level_values(self.date_index_name)
+        date_index = self.data.index.get_level_values(MULTI_INDEX_FACTOR.date_index)
         date_index = [ensure_datetime(date_, date_format) for date_ in date_index]
         self.data.reset_index(inplace=True)
-        self.data[self.date_index_name] = date_index
+        self.data[MULTI_INDEX_FACTOR.date_index] = date_index
         if self.production_data_format == OutputDataFormat.MULTI_INDEX_DF:
-            self.data.set_index(keys=MULTI_INDEX_NAMES, inplace=True)
+            self.data.set_index(keys=MULTI_INDEX_FACTOR.full_index, inplace=True)
         else:
-            self.data.set_index(keys=self.date_index_name, inplace=True)
+            self.data.set_index(keys=MULTI_INDEX_FACTOR.date_index, inplace=True)
 
     @property
     def type(self):
@@ -81,7 +83,7 @@ class Factor(object):
     @property
     def trade_date_list(self):
         if self.production_data_format == OutputDataFormat.MULTI_INDEX_DF:
-            ret = set(self.data.index.get_level_values(self.date_index_name))
+            ret = set(self.data.index.get_level_values(MULTI_INDEX_FACTOR.date_index))
             ret = list(sorted(set(ret)))
         else:
             ret = self.data.index.tolist()

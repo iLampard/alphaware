@@ -6,7 +6,8 @@ from .date_utils import (map_to_biz_day,
 from .input_validation import (ensure_pd_series,
                                ensure_pyfin_date,
                                ensure_datetime,
-                               ensure_np_array)
+                               ensure_np_array,
+                               ensure_pd_index_names)
 from .pandas_utils import convert_df_format
 
 __all__ = ['map_to_biz_day',
@@ -15,4 +16,5 @@ __all__ = ['map_to_biz_day',
            'ensure_pyfin_date',
            'ensure_datetime',
            'ensure_np_array',
+           'ensure_pd_index_names',
            'convert_df_format']

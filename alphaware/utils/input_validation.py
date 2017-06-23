@@ -6,6 +6,7 @@ from datetime import datetime
 import numpy as np
 from argcheck import expect_types
 from PyFin.DateUtilities import Date
+from ..enums import OutputDataFormat
 
 
 def ensure_pd_series(data):
@@ -54,3 +55,12 @@ def ensure_np_array(func, argname, arg):
         return arg
     else:
         return arg.values
+
+
+@expect_types(data=(pd.DataFrame, pd.Series), data_format=OutputDataFormat)
+def ensure_pd_index_names(data, data_format, valid_index):
+    if data_format == OutputDataFormat.MULTI_INDEX_DF:
+        data.index.names = valid_index.full_index
+    else:
+        data.index.name = valid_index.date_index
+    return data
