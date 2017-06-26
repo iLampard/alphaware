@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
+from.benchmark import Benchmark
 from .factor_container import (Factor,
                                FactorContainer,
                                ensure_factor_container)
@@ -14,7 +14,8 @@ from .neutralizer import (get_indicator_matrix,
                           Neutralizer,
                           FactorNeutralizer)
 
-__all__ = ['Factor',
+__all__ = ['Benchmark',
+           'Factor',
            'FactorContainer',
            'ensure_factor_container',
            'FactorTransformer',

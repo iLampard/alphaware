@@ -34,6 +34,7 @@ class FactorType(StrEnum):
     RETURN = 'return'
     PRICE = 'price'
     ALPHA_FACTOR_MV = 'alpha_factor_mv'
+    SCORE = 'score'
 
 
 @unique
