@@ -66,7 +66,7 @@ class FactorNeutralizer(FactorTransformer):
     def __init__(self, copy=True, groupby_date=True, out_container=False):
         super(FactorNeutralizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
 
-    def _build_imputer_mapper(self, factor_container, **kwargs):
+    def _build_mapper(self, factor_container, **kwargs):
         data_mapper_by_date = pd.Series()
         for date in factor_container.tiaocang_date:
             industry_code = factor_container.industry_code.loc[date]
@@ -74,15 +74,16 @@ class FactorNeutralizer(FactorTransformer):
             data = factor_container.data.loc[date]
 
             data_mapper = [([factor_name],
-                            self._get_imputer(factor_type=factor_container.property[factor_name]['type'],
-                                              factor_norm_type=factor_container.property[factor_name]['norm_type'],
-                                              industry_code=industry_code,
-                                              mkt_cap=mkt_cap))
+                            self._get_mapper(factor_type=factor_container.property[factor_name]['type'],
+                                             factor_norm_type=factor_container.property[factor_name]['norm_type'],
+                                             industry_code=industry_code,
+                                             mkt_cap=mkt_cap))
                            for factor_name in data.columns]
             data_mapper_by_date[date] = DataFrameMapper(data_mapper)
         return data_mapper_by_date
 
-    def _get_imputer(self, factor_type, factor_norm_type, industry_code, mkt_cap=None):
+    @staticmethod
+    def _get_mapper(factor_type, factor_norm_type, industry_code, mkt_cap=None):
         if factor_type == FactorType.INDUSTY_CODE or factor_norm_type == FactorNormType.Null:
             return None
         elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:

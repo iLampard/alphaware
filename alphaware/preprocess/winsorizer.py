@@ -38,13 +38,13 @@ class FactorWinsorizer(FactorTransformer):
         self.q_max = None
         self.q_min = None
 
-    def _build_imputer_mapper(self, factor_container):
+    def _build_mapper(self, factor_container):
         data = factor_container.data
-        data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
+        data_mapper = [([factor_name], self._get_mapper(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]
         return DataFrameMapper(data_mapper)
 
-    def _get_imputer(self, factor_type):
+    def _get_mapper(self, factor_type):
         if factor_type == FactorType.INDUSTY_CODE:
             return None
         elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:

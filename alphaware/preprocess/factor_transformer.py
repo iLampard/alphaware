@@ -23,10 +23,10 @@ class FactorTransformer(BaseEstimator, TransformerMixin):
 
     @preprocess(factor_container=ensure_factor_container)
     def fit(self, factor_container, **kwargs):
-        self.df_mapper = self._build_imputer_mapper(factor_container)
+        self.df_mapper = self._build_mapper(factor_container)
         return self
 
-    def _build_imputer_mapper(self, factor_container):
+    def _build_mapper(self, factor_container):
         """
         https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
         """

@@ -14,6 +14,11 @@ MULTI_INDEX_INDUSTRY_WEIGHT.industry_index = 'industry'
 MULTI_INDEX_INDUSTRY_WEIGHT.full_index = ['tradeDate', 'industry']
 MULTI_INDEX_INDUSTRY_WEIGHT.col_name = ['weight']
 
+MULTI_INDEX_SELECTOR = namedtuple('MULTI_INDEX_SELECTOR', ['date_index', 'sec_index', 'col_name'])
+MULTI_INDEX_SELECTOR.date_index = 'tradeDate'
+MULTI_INDEX_SELECTOR.sec_index = 'secID'
+MULTI_INDEX_SELECTOR.col_name = ['weight']
+
 
 SW_INDUSTRY_MAP = {
     '801190.SI': '金融服务',

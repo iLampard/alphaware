@@ -48,3 +48,9 @@ class FactorNormType(IntEnum):
 class OutputDataFormat(IntEnum):
     MULTI_INDEX_DF = 0
     PITVOT_TABLE_DF = 1
+
+
+@unique
+class SelectionMethod(StrEnum):
+    BRUTAL = 'brutal'
+    INDUSTRY_NEUTRAL = 'industry_neutral'

@@ -81,16 +81,16 @@ class FactorImputer(FactorTransformer):
         self.mapper = None
         self.df_mapper = None
 
-    def _build_imputer_mapper(self, factor_container):
+    def _build_mapper(self, factor_container):
         """
         https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
         """
         data = factor_container.data
-        data_mapper = [([factor_name], self._get_imputer(factor_container.property[factor_name]['type']))
+        data_mapper = [([factor_name], self._get_mapper(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]
         return DataFrameMapper(data_mapper)
 
-    def _get_imputer(self, factor_type):
+    def _get_mapper(self, factor_type):
         if factor_type == FactorType.INDUSTY_CODE:
             return ExtCategoricalImputer(strategy=self.categorical_strategy,
                                          custom_value=self.custom_value,
