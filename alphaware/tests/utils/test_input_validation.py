@@ -13,8 +13,8 @@ from alphaware.utils import (ensure_pd_series,
                              ensure_np_array,
                              ensure_pd_index_names)
 from alphaware.enums import OutputDataFormat
-from alphaware.const import (MULTI_INDEX_FACTOR,
-                             MULTI_INDEX_INDUSTRY_WEIGHT)
+from alphaware.const import (INDEX_FACTOR,
+                             INDEX_INDUSTRY_WEIGHT)
 
 
 class TestInputValidation(TestCase):
@@ -23,7 +23,7 @@ class TestInputValidation(TestCase):
                            (pd.Series([1, 2, 3]), pd.Series([1, 2, 3]))
                            ])
     def test_ensure_pd_series(self, data, expected):
-        calculated = ensure_pd_series(data)
+        calculated = ensure_pd_series(None, None, data)
         assert_series_equal(calculated, expected)
 
     @parameterized.expand([('2014-01-02', '%Y-%m-%d', Date(2014, 1, 2)),
@@ -44,19 +44,16 @@ class TestInputValidation(TestCase):
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
                                                                           names=['date', 'sec'])),
                             OutputDataFormat.MULTI_INDEX_DF,
-                            MULTI_INDEX_INDUSTRY_WEIGHT,
+                            INDEX_INDUSTRY_WEIGHT,
                             pd.DataFrame([1, 2],
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
                                                                           names=['tradeDate', 'industry'])
                                          )),
                            (pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date')),
                             OutputDataFormat.PITVOT_TABLE_DF,
-                            MULTI_INDEX_FACTOR,
+                            INDEX_FACTOR,
                             pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='tradeDate'))
                             )])
     def test_ensure_pd_index_names(self, data, data_format, valid_index, expected):
         calculated = ensure_pd_index_names(data, data_format, valid_index)
-        print data
-        print calculated
-        print expected
         assert_frame_equal(calculated, expected)

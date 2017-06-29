@@ -9,8 +9,8 @@ from ..enums import (FreqType,
 from ..utils import (convert_df_format,
                      ensure_datetime,
                      ensure_pd_index_names)
-from ..const import (MULTI_INDEX_FACTOR,
-                     MULTI_INDEX_INDUSTRY_WEIGHT)
+from ..const import (INDEX_FACTOR,
+                     INDEX_INDUSTRY_WEIGHT)
 
 _REQUIRED_BENCHMARK_PROPERTY = {'data_format': OutputDataFormat.MULTI_INDEX_DF,
                                 'freq': FreqType.EOM}
@@ -53,14 +53,14 @@ class Benchmark(object):
         return
 
     def _validate_date_format(self):
-        self._ensure_date_format(self.hist_return, MULTI_INDEX_FACTOR)
-        self._ensure_date_format(self.industry_weight, MULTI_INDEX_INDUSTRY_WEIGHT)
+        self._ensure_date_format(self.hist_return, INDEX_FACTOR)
+        self._ensure_date_format(self.industry_weight, INDEX_INDUSTRY_WEIGHT)
 
     def get_industry_weight_on_date(self, date):
         pyFinAssert(self.industry_weight is not None, ValueError, 'industry weight data is empty')
         date = ensure_datetime(date)
         data = self.industry_weight.loc[date]
-        data = data.reset_index().set_index(MULTI_INDEX_INDUSTRY_WEIGHT.industry_index)
+        data = data.reset_index().set_index(INDEX_INDUSTRY_WEIGHT.industry_index)
         data = data[data.columns[0]]
         resid_weight = 100 - np.sum(data.values)
         data['other'] = resid_weight if resid_weight > 0 else 0.0

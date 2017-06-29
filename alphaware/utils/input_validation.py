@@ -9,13 +9,22 @@ from PyFin.DateUtilities import Date
 from ..enums import OutputDataFormat
 
 
-def ensure_pd_series(data):
-    if isinstance(data, pd.Series):
-        return data
-    try:
-        return pd.Series(data)
-    except Exception as e:
-        raise 'Error in ensure_pd_series: {0}'.format(e)
+@expect_types(arg=(list, np.ndarray, pd.DataFrame, pd.Series))
+def ensure_pd_series(func, argname, arg):
+    if isinstance(arg, pd.Series):
+        return arg
+    elif isinstance(arg, pd.DataFrame):
+        return arg[arg.columns[0]]
+    else:
+        return pd.Series(arg)
+
+
+@expect_types(arg=(list, np.ndarray, pd.DataFrame, pd.Series))
+def ensure_pd_df(func, argname, arg):
+    if isinstance(arg, pd.DataFrame):
+        return arg
+    else:
+        return pd.DataFrame(arg)
 
 
 @expect_types(date=(str, datetime, Date))

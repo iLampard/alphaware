@@ -97,13 +97,13 @@ class FactorNeutralizer(FactorTransformer):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
         if not self.groupby_date:
-            imputer_data_agg = self.df_mapper.fit_transform(factor_container.data)
+            neutralize_data_agg = self.df_mapper.fit_transform(factor_container.data)
         else:
             tiaocang_date = factor_container.tiaocang_date
-            imputer_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
-                            tiaocang_date]
-            imputer_data_agg = np.vstack(imputer_data)
-        factor_container.data = pd.DataFrame(imputer_data_agg,
+            neutralize_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
+                               tiaocang_date]
+            neutralize_data_agg = np.vstack(neutralize_data)
+        factor_container.data = pd.DataFrame(neutralize_data_agg,
                                              index=factor_container.data.index,
                                              columns=factor_container.data.columns)
         if self.out_container:

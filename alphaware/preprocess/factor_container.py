@@ -2,7 +2,6 @@
 
 import copy
 import pandas as pd
-import numpy as np
 from collections import defaultdict
 from toolz.dicttoolz import (merge,
                              dissoc)
@@ -11,6 +10,7 @@ from argcheck import (expect_types,
                       optional,
                       preprocess)
 from ..utils import (ensure_datetime,
+                     ensure_pd_df,
                      convert_df_format,
                      get_tiaocang_date,
                      ensure_np_array,
@@ -19,7 +19,7 @@ from ..enums import (FreqType,
                      FactorType,
                      OutputDataFormat,
                      FactorNormType)
-from ..const import MULTI_INDEX_FACTOR
+from ..const import INDEX_FACTOR
 
 _REQUIRED_FACTOR_PROPERTY = {'type': FactorType.ALPHA_FACTOR,
                              'data_format': OutputDataFormat.MULTI_INDEX_DF,
@@ -34,6 +34,7 @@ def update_factor_property(factor_property):
 
 
 class Factor(object):
+    @preprocess(data=ensure_pd_df)
     def __init__(self, data, name, property_dict=defaultdict(str), **kwargs):
         self.data = copy.deepcopy(data)
         self.name = name
@@ -57,16 +58,16 @@ class Factor(object):
     def _validate_date_index(self):
         self.data = ensure_pd_index_names(self.data,
                                           data_format=self.production_data_format,
-                                          valid_index=MULTI_INDEX_FACTOR)
+                                          valid_index=INDEX_FACTOR)
         date_format = self.property.get('date_format', '%Y-%m-%d')
-        date_index = self.data.index.get_level_values(MULTI_INDEX_FACTOR.date_index)
+        date_index = self.data.index.get_level_values(INDEX_FACTOR.date_index)
         date_index = [ensure_datetime(date_, date_format) for date_ in date_index]
         self.data.reset_index(inplace=True)
-        self.data[MULTI_INDEX_FACTOR.date_index] = date_index
+        self.data[INDEX_FACTOR.date_index] = date_index
         if self.production_data_format == OutputDataFormat.MULTI_INDEX_DF:
-            self.data.set_index(keys=MULTI_INDEX_FACTOR.full_index, inplace=True)
+            self.data.set_index(keys=INDEX_FACTOR.full_index, inplace=True)
         else:
-            self.data.set_index(keys=MULTI_INDEX_FACTOR.date_index, inplace=True)
+            self.data.set_index(keys=INDEX_FACTOR.date_index, inplace=True)
 
     @property
     def type(self):
@@ -83,7 +84,7 @@ class Factor(object):
     @property
     def trade_date_list(self):
         if self.production_data_format == OutputDataFormat.MULTI_INDEX_DF:
-            ret = set(self.data.index.get_level_values(MULTI_INDEX_FACTOR.date_index))
+            ret = set(self.data.index.get_level_values(INDEX_FACTOR.date_index))
             ret = list(sorted(set(ret)))
         else:
             ret = self.data.index.tolist()
@@ -194,6 +195,13 @@ class FactorContainer(object):
     def industry_code(self):
         for key in self.property:
             if self.property[key]['type'] == FactorType.INDUSTY_CODE:
+                return self.data[key]
+        return None
+
+    @property
+    def score(self):
+        for key in self.property:
+            if self.property[key]['type'] == FactorType.SCORE:
                 return self.data[key]
         return None
 

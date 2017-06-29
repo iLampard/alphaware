@@ -3,21 +3,21 @@
 
 from collections import namedtuple
 
-MULTI_INDEX_FACTOR = namedtuple('MULTI_INDEX_FACTOR', ['date_index', 'sec_index', 'full_index'])
-MULTI_INDEX_FACTOR.date_index = 'tradeDate'
-MULTI_INDEX_FACTOR.sec_index = 'secID'
-MULTI_INDEX_FACTOR.full_index = ['tradeDate', 'secID']
+INDEX_FACTOR = namedtuple('MULTI_INDEX_FACTOR', ['date_index', 'sec_index', 'full_index'])
+INDEX_FACTOR.date_index = 'tradeDate'
+INDEX_FACTOR.sec_index = 'secID'
+INDEX_FACTOR.full_index = ['tradeDate', 'secID']
 
-MULTI_INDEX_INDUSTRY_WEIGHT = namedtuple('MULTI_INDEX_FACTOR', ['date_index', 'industry_index', 'full_index', 'col_name'])
-MULTI_INDEX_INDUSTRY_WEIGHT.date_index = 'tradeDate'
-MULTI_INDEX_INDUSTRY_WEIGHT.industry_index = 'industry'
-MULTI_INDEX_INDUSTRY_WEIGHT.full_index = ['tradeDate', 'industry']
-MULTI_INDEX_INDUSTRY_WEIGHT.col_name = ['weight']
+INDEX_INDUSTRY_WEIGHT = namedtuple('MULTI_INDEX_INDUSTRY_WEIGHT', ['date_index', 'industry_index', 'full_index', 'col_name'])
+INDEX_INDUSTRY_WEIGHT.date_index = 'tradeDate'
+INDEX_INDUSTRY_WEIGHT.industry_index = 'industry'
+INDEX_INDUSTRY_WEIGHT.full_index = ['tradeDate', 'industry']
+INDEX_INDUSTRY_WEIGHT.col_name = 'weight'
 
-MULTI_INDEX_SELECTOR = namedtuple('MULTI_INDEX_SELECTOR', ['date_index', 'sec_index', 'col_name'])
-MULTI_INDEX_SELECTOR.date_index = 'tradeDate'
-MULTI_INDEX_SELECTOR.sec_index = 'secID'
-MULTI_INDEX_SELECTOR.col_name = ['weight']
+INDEX_SELECTOR = namedtuple('MULTI_INDEX_SELECTOR', ['date_index', 'sec_index', 'col_name'])
+INDEX_SELECTOR.date_index = 'tradeDate'
+INDEX_SELECTOR.sec_index = 'secID'
+INDEX_SELECTOR.col_name = 'weight'
 
 
 SW_INDUSTRY_MAP = {

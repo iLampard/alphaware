@@ -2,13 +2,13 @@
 
 import pandas as pd
 from argcheck import expect_types
-from alphaware.const import MULTI_INDEX_FACTOR
+from alphaware.const import INDEX_FACTOR
 from alphaware.enums import OutputDataFormat
 
 
 @expect_types(data=(pd.Series, pd.DataFrame))
 def convert_df_format(data, target_format=OutputDataFormat.MULTI_INDEX_DF, col_name='factor',
-                      multi_index=MULTI_INDEX_FACTOR):
+                      multi_index=INDEX_FACTOR):
     if target_format == OutputDataFormat.MULTI_INDEX_DF:
         tmp = data.stack()
         data_ = pd.DataFrame(tmp)

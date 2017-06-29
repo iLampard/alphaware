@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-
-import numpy as np
-import pandas as pd
 from PyFin.DateUtilities import (Calendar,
                                  Date,
                                  Period,
                                  Schedule)
 from PyFin.Enums import (BizDayConventions,
                          Weekdays)
-from argcheck import (expect_types)
+from argcheck import (expect_types,
+                      preprocess)
 
 from alphaware.enums import FreqType
 from .input_validation import (ensure_pd_series,
                                ensure_pyfin_date)
 
 
-@expect_types(date_series=(list, pd.Series, np.ndarray))
+@preprocess(date_series=ensure_pd_series)
 def map_to_biz_day(date_series, calendar='China.SSE', convention=BizDayConventions.Preceding):
     """
     :param date_series: array-like of datetime.datetime
@@ -25,7 +23,6 @@ def map_to_biz_day(date_series, calendar='China.SSE', convention=BizDayConventio
     :param convention: str, optional, 如果日期为节假日，如何调整成交易日，见PyFin.DateUtilities.Schedule, default = preceding
     :return: pd.Series, datetime.datetime， 交易日列表
     """
-    date_series = ensure_pd_series(date_series)
     unique_date_list = sorted(set(date_series))
     py_date_list = [Date.fromDateTime(date) for date in unique_date_list]
     py_date_list = [Calendar(calendar).adjustDate(date, convention) for date in py_date_list]
