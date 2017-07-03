@@ -18,61 +18,58 @@ from alphaware.const import (INDEX_FACTOR,
 
 class TestSelector(TestCase):
     @parameterized.expand(
-        [(pd.Series([3, 2, 4, 5, 6], index=['001', '002', '003', '004', '005']),
+        [(pd.Series([3, 2, 4, 5, 6], index=['001', '002', '003', '004', '005'], name='score'),
           2,
           0.1,
-          pd.DataFrame([50.0, 50.0], index=['005', '004'], columns=['weight'])),
-         (pd.Series([3, 2, 4, -5, -6], index=['001', '002', '003', '004', '005']),
+          pd.DataFrame({'score': [6, 5], 'weight': [50.0, 50.0]}, index=['005', '004'])),
+         (pd.Series([3, 2, 4, -5, -6], index=['001', '002', '003', '004', '005'], name='score'),
           2,
           0.1,
-          pd.DataFrame([50.0, 50.0], index=['003', '001'], columns=['weight'])),
-         (pd.Series([3, 2, 4, 5, 6], index=['001', '002', '003', '004', '005']),
+          pd.DataFrame({'score': [4, 3], 'weight': [50.0, 50.0]}, index=['003', '001'])),
+         (pd.Series([3, 2, 4, 5, 6], index=['001', '002', '003', '004', '005'], name='score'),
           None,
           0.8,
-          pd.DataFrame([25.0, 25.0, 25.0, 25.0], index=['005', '004', '003', '001'], columns=['weight']))])
+          pd.DataFrame({'score': [6, 5, 4, 3],
+                        'weight': [25.0, 25.0, 25.0, 25.0]},
+                       index=['005', '004', '003', '001']))])
     def test_brutal_selector(self, X, nb_select, prop_select, expected):
         calculated = BrutalSelector(nb_select, prop_select).fit_transform(X)
         assert_frame_equal(calculated, expected)
 
-    @parameterized.expand([(pd.DataFrame({'score': [2, 3, 3, 8, 4, 5], 'industry_code': ['a', 'a', 'a', 'b', 'b', 'b']},
-                                         index=['001', '002', '003', '004', '005', '006']),
-                            pd.DataFrame({'weight': [0.5, 0.4, 0.1]}, index=['a', 'b', 'c']),
-                            0.1,
-                            2,
-                            False,
-                            pd.DataFrame({'industry_code': ['a', 'a', 'b', 'b'],
-                                          'weight': [0.25, 0.25, 0.2, 0.2]},
-                                         index=['002', '003', '004', '006'])
-                            ),
-                           (pd.DataFrame({'score': [2, 3, 3, 8, 4, 5, 2, 3, 1, 11],
-                                          'industry_code': ['a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b', 'c']},
-                                         index=['001', '002', '003', '004', '005', '006', '007', '008', '009', '010']),
-                            pd.DataFrame({'weight': [0.5, 0.4, 0.1]}, index=['a', 'b', 'c']),
-                            0.6,
-                            1,
-                            True,
-                            pd.DataFrame({'score': [8, 3, 5, 4, 3, 11],
-                                          'industry_code': ['a', 'a', 'b', 'b', 'b', 'c'],
-                                          'weight': [0.25, 0.25, 0.1333333333, 0.133333333333, 0.1333333333, 0.1]},
-                                         index=['004', '002', '006', '005', '008', '010'])
-                            )])
+    @parameterized.expand(
+        [(pd.DataFrame({'score': [2, 3, 3, 8, 4, 5], 'industry_code': ['a', 'a', 'a', 'b', 'b', 'b']},
+                       index=['001', '002', '003', '004', '005', '006']),
+          pd.DataFrame({'weight': [0.5, 0.4, 0.1]}, index=['a', 'b', 'c']),
+          0.1,
+          2,
+          pd.DataFrame({'score': [3, 3, 8, 5],
+                        'industry_code': ['a', 'a', 'b', 'b'],
+                        'weight': [0.25, 0.25, 0.2, 0.2]},
+                       index=['002', '003', '004', '006'])
+          ),
+         (pd.DataFrame({'score': [2, 3, 3, 8, 4, 5, 2, 3, 1, 11],
+                        'industry_code': ['a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b', 'c']},
+                       index=['001', '002', '003', '004', '005', '006', '007', '008', '009', '010']),
+          pd.DataFrame({'weight': [0.5, 0.4, 0.1]}, index=['a', 'b', 'c']),
+          0.6,
+          1,
+          pd.DataFrame({'score': [8, 3, 5, 4, 3, 11],
+                        'industry_code': ['a', 'a', 'b', 'b', 'b', 'c'],
+                        'weight': [0.25, 0.25, 0.1333333333, 0.133333333333, 0.1333333333, 0.1]},
+                       index=['004', '002', '006', '005', '008', '010'])
+          )])
     def test_industry_neutral_selector(self,
                                        X,
                                        industry_weight,
                                        prop_select,
                                        min_select_per_industry,
-                                       out_full,
                                        expected):
         calculated = IndustryNeutralSelector(industry_weight=industry_weight,
                                              min_select_per_industry=min_select_per_industry,
                                              prop_select=prop_select,
-                                             out_full=out_full
                                              ).fit_transform(X)
-        try:
-            expected = expected[['score', 'industry_code', 'weight']]
-        except KeyError:
-            pass
 
+        expected = expected[['score', 'industry_code', 'weight']]
         assert_frame_equal(calculated, expected)
 
     def test_selector(self):
@@ -95,4 +92,14 @@ class TestSelector(TestCase):
 
         calculated = Selector(industry_weight=industry_weight,
                               method=SelectionMethod.INDUSTRY_NEUTRAL).fit_transform(fc)
-        print calculated
+
+        index_exp = pd.MultiIndex.from_arrays(
+            [[dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 2, 28),
+              dt(2014, 2, 28), dt(2014, 2, 28), dt(2014, 2, 28)],
+             ['002', '003', '004', '005', '002', '001', '004', '005', '003']], names=['tradeDate', 'secID'])
+        expected = pd.DataFrame({'score': [3, 3, 8, 4, 9, 5, 2, 0, 11],
+                                 'industry_code': ['a', 'a', 'b', 'b', 'a', 'a', 'b', 'b', 'other'],
+                                 'weight': [0.25, 0.25, 0.2, 0.2, 0.25, 0.25, 0.15, 0.15, 0.2]},
+                                index=index_exp, dtype=object)
+        expected = expected[['score', 'industry_code', 'weight']]
+        assert_frame_equal(calculated, expected)

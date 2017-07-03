@@ -22,13 +22,12 @@ from .utils import ensure_pd_series
 
 class IndustryNeutralSelector(BaseEstimator, TransformerMixin):
     @preprocess(industry_weight=ensure_pd_series)
-    def __init__(self, industry_weight, prop_select=0.1, min_select_per_industry=2, out_full=False, reset_index=False):
+    def __init__(self, industry_weight, prop_select=0.1, min_select_per_industry=2, reset_index=False):
         self.industry_weight = industry_weight
         self.prop_select = prop_select
         self.min_select_per_industry = min_select_per_industry
         self.score = None
         self.industry_code = None
-        self.out_full = out_full
         self.reset_index = reset_index
 
     def fit(self, X, **kwargs):
@@ -63,16 +62,15 @@ class IndustryNeutralSelector(BaseEstimator, TransformerMixin):
                                          index=largest_score.index)
 
             ret = pd.concat([ret, pd.concat([largest_score[self.score.name], weight_append], axis=1)],
-                            axis=0) if self.out_full else pd.concat([ret, weight_append], axis=0)
+                            axis=0)
 
         return ret.reset_index() if self.reset_index else ret
 
 
 class BrutalSelector(BaseEstimator, TransformerMixin):
-    def __init__(self, nb_select=10, prop_select=0.1, out_full=False, reset_index=False):
+    def __init__(self, nb_select=10, prop_select=0.1, reset_index=False):
         self.nb_select = nb_select
         self.prop_select = prop_select
-        self.out_full = out_full
         self.reset_index = reset_index
 
     def fit(self, X):
@@ -90,8 +88,7 @@ class BrutalSelector(BaseEstimator, TransformerMixin):
         largest_score = X.nlargest(n=nb_select)
         weight = [100.0 / nb_select] * nb_select
         weight_append = pd.DataFrame({INDEX_SELECTOR.col_name: weight}, index=largest_score.index)
-        if self.out_full:
-            weight_append = pd.concat([largest_score, weight_append], axis=1)
+        weight_append = pd.concat([largest_score, weight_append], axis=1)
         ret = pd.concat([ret, weight_append], axis=0)
 
         return ret.reset_index() if self.reset_index else ret
@@ -113,7 +110,6 @@ class Selector(FactorTransformer):
         self.prop_select = prop_select
         self.industry_weight = industry_weight
         self.min_select_per_industry = kwargs.get('min_select_per_industry', 2)
-        self.out_full = kwargs.get('out_full', False)
 
     def _build_mapper(self, factor_container):
         data_mapper_by_date = pd.Series()
@@ -127,14 +123,12 @@ class Selector(FactorTransformer):
                                 IndustryNeutralSelector(industry_weight=industry_weight,
                                                         prop_select=self.prop_select,
                                                         min_select_per_industry=self.min_select_per_industry,
-                                                        out_full=self.out_full,
                                                         reset_index=True))]
             else:
                 data_mapper = [(score.name, BrutalSelector(nb_select=self.nb_select,
                                                            prop_select=self.prop_select,
-                                                           out_full=self.out_full,
                                                            reset_index=True))]
-            data_mapper_by_date[date] = DataFrameMapper(data_mapper, input_df=True)
+            data_mapper_by_date[date] = DataFrameMapper(data_mapper, input_df=True, df_out=True)
 
         return data_mapper_by_date
 
@@ -148,12 +142,19 @@ class Selector(FactorTransformer):
             tiaocang_date = factor_container.tiaocang_date
             selector_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
                              tiaocang_date]
-            date_list = [[tiaocang_date[i]]*len(selector_data[i]) for i in range(len(selector_data))]
+            date_list = [[tiaocang_date[i]] * len(selector_data[i]) for i in range(len(selector_data))]
             date_agg = list(chain.from_iterable(date_list))
-            selector_data_agg = np.hstack(selector_data)
+            selector_data_ = np.vstack(selector_data)
+            selector_data_agg = np.column_stack((date_agg, selector_data_))
 
         data_df = pd.DataFrame(selector_data_agg)
-        data_df.set_index(data_df.columns[0], data_df.columns[1])
+        data_df.columns = [INDEX_FACTOR.date_index,
+                           INDEX_FACTOR.sec_index,
+                           INDEX_FACTOR.col_score,
+                           INDEX_INDUSTRY_WEIGHT.industry_index,
+                           INDEX_SELECTOR.col_name]
+        data_df.set_index([data_df.columns[0], data_df.columns[1]], inplace=True)
+
         factor_container.data = data_df
         if self.out_container:
             return factor_container
