@@ -11,13 +11,13 @@ from PyFin.Utilities import pyFinAssert
 from argcheck import preprocess
 from itertools import chain
 from alphaware.preprocess import (ensure_factor_container,
-                         FactorTransformer)
+                                  FactorTransformer)
 from alphaware.enums import (FactorType,
-                    SelectionMethod)
+                             SelectionMethod)
 from alphaware.const import (INDEX_SELECTOR,
-                    INDEX_FACTOR,
-                    INDEX_INDUSTRY_WEIGHT)
-from alphaware.utils import ensure_pd_series,top
+                             INDEX_FACTOR,
+                             INDEX_INDUSTRY_WEIGHT)
+from alphaware.utils import ensure_pd_series, top
 
 
 class IndustryNeutralSelector(BaseEstimator, TransformerMixin):
@@ -56,7 +56,7 @@ class IndustryNeutralSelector(BaseEstimator, TransformerMixin):
                 continue
 
             nb_select = int(max(len(group) * self.prop_select, min(self.min_select_per_industry, len(group))))
-            largest_score = top(group,n=nb_select, column=self.score.name)
+            largest_score = top(group, n=nb_select, column=self.score.name)
             weight_append = pd.DataFrame({INDEX_SELECTOR.col_name: [weight / nb_select] * nb_select,
                                           self.industry_code.name: [name] * nb_select},
                                          index=largest_score.index)
@@ -85,7 +85,7 @@ class BrutalSelector(BaseEstimator, TransformerMixin):
 
         ret = pd.DataFrame()
         nb_select = self.nb_select if self.nb_select is not None else int(len(X) * self.prop_select)
-        largest_score = top(X,n=nb_select)
+        largest_score = top(X, n=nb_select)
         weight = [100.0 / nb_select] * nb_select
         weight_append = pd.DataFrame({INDEX_SELECTOR.col_name: weight}, index=largest_score.index)
         weight_append = pd.concat([largest_score, weight_append], axis=1)
@@ -160,5 +160,3 @@ class Selector(FactorTransformer):
             return factor_container
         else:
             return factor_container.data
-
-

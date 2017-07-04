@@ -8,7 +8,7 @@ from pandas import (MultiIndex,
 from pandas.util.testing import assert_frame_equal
 from alphaware.enums import OutputDataFormat
 from alphaware.const import INDEX_FACTOR
-from alphaware.utils import convert_df_format,top
+from alphaware.utils import convert_df_format, top
 
 
 class TestPandasUtils(TestCase):
@@ -39,17 +39,10 @@ class TestPandasUtils(TestCase):
         calculated = convert_df_format(data, target_format, col_name, multi_index)
         assert_frame_equal(calculated, expected)
 
-
     @parameterized.expand(
-        [(pd.DataFrame(data=[1,2,3,4,5,6,7,8],columns=['1']),
-         pd.DataFrame(data=[8,7,6,5,4],index=[7,6,5,4,3],columns=['1'])
+        [(pd.DataFrame(data=[1, 2, 3, 4, 5, 6, 7, 8], columns=['1']),
+          pd.DataFrame(data=[8, 7, 6, 5, 4], index=[7, 6, 5, 4, 3], columns=['1'])
           )])
-    def test_top(self,data,expected):
-        calculated = top(data,column=['1'])
-        assert_frame_equal(calculated,expected)
-
-
-
-
-
-
+    def test_top(self, data, expected):
+        calculated = top(data, column=['1'])
+        assert_frame_equal(calculated, expected)

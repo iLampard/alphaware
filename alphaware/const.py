@@ -2,6 +2,13 @@
 
 
 from collections import namedtuple
+from empyrical import (annual_return,
+                       max_drawdown,
+                       calmar_ratio,
+                       sharpe_ratio,
+                       excess_sharpe,
+                       beta,
+                       alpha)
 
 INDEX_FACTOR = namedtuple('MULTI_INDEX_FACTOR', ['date_index', 'sec_index', 'full_index', 'col_score'])
 INDEX_FACTOR.date_index = 'tradeDate'
@@ -20,6 +27,21 @@ INDEX_SELECTOR = namedtuple('MULTI_INDEX_SELECTOR', ['date_index', 'sec_index', 
 INDEX_SELECTOR.date_index = 'tradeDate'
 INDEX_SELECTOR.sec_index = 'secID'
 INDEX_SELECTOR.col_name = 'weight'
+
+RETURN = namedtuple('RETURN', ['data', 'type'])
+
+SIMPLE_STAT_FUNCS = namedtuple('SIMPLE_STAT_FUNC', ['func', 'sign'])
+SIMPLE_STAT_FUNCS.func = [annual_return,
+                          max_drawdown,
+                          calmar_ratio,
+                          sharpe_ratio]
+SIMPLE_STAT_FUNCS.sign = [1, -1, 1, 1]
+
+FACTOR_STAT_FUNCS = namedtuple('FACTOR_STAT_FUNCS', ['func', 'sign'])
+FACTOR_STAT_FUNCS.func = [excess_sharpe,
+                          alpha,
+                          beta]
+FACTOR_STAT_FUNCS.sign = [1, 1, 1]
 
 SW_INDUSTRY_MAP = {
     '801190.SI': '金融服务',

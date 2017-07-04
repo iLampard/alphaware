@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from argcheck import expect_types
-from alphaware.const import INDEX_FACTOR
-from alphaware.enums import OutputDataFormat
+from argcheck import (expect_types,
+                      optional)
 from PyFin.Utilities import pyFinAssert
+from ..const import INDEX_FACTOR
+from ..enums import (FreqType,
+                     OutputDataFormat)
 
 
 @expect_types(data=(pd.Series, pd.DataFrame))
@@ -23,6 +25,7 @@ def convert_df_format(data, target_format=OutputDataFormat.MULTI_INDEX_DF, col_n
 
     return data_
 
+
 @expect_types(df=(pd.Series, pd.DataFrame))
 def top(df, column=None, n=5):
     if isinstance(df, pd.Series):
@@ -32,3 +35,14 @@ def top(df, column=None, n=5):
         ret = df.sort_values(by=column, ascending=False)[:n]
 
     return ret
+
+
+@expect_types(data=(pd.DataFrame, pd.Series), freq=optional(FreqType, str))
+def group_by_freq(data, freq=FreqType.EOM):
+    data_ = pd.DataFrame(data) if isinstance(data, pd.Series) else data
+    if freq == FreqType.EOD:
+        return data_.groupby([lambda x: x.year, lambda x: x.month, lambda x: x.day])
+    elif freq == FreqType.EOM:
+        return data_.groupby(pd.TimeGrouper(freq='M'))
+    elif freq == FreqType.EOY:
+        return data_.groupby(pd.TimeGrouper(freq='A'))
