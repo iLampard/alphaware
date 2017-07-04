@@ -4,12 +4,12 @@ from collections import defaultdict
 from toolz.dicttoolz import merge
 from PyFin.Utilities import pyFinAssert
 import numpy as np
-from ..enums import (FreqType,
+from alphaware.enums import (FreqType,
                      OutputDataFormat)
-from ..utils import (convert_df_format,
+from alphaware.utils import (convert_df_format,
                      ensure_datetime,
                      ensure_pd_index_names)
-from ..const import (INDEX_FACTOR,
+from alphaware.const import (INDEX_FACTOR,
                      INDEX_INDUSTRY_WEIGHT)
 
 _REQUIRED_BENCHMARK_PROPERTY = {'data_format': OutputDataFormat.MULTI_INDEX_DF,
@@ -47,7 +47,7 @@ class Benchmark(object):
         if self.production_data_format == OutputDataFormat.MULTI_INDEX_DF:
             data.set_index(keys=multi_index.full_index, inplace=True)
             if hasattr(multi_index, 'col_name'):
-                data.columns = multi_index.col_name
+                data.columns = [multi_index.col_name]
         else:
             data.set_index(keys=multi_index.date_index, inplace=True)
         return
@@ -65,3 +65,4 @@ class Benchmark(object):
         resid_weight = 100 - np.sum(data.values)
         data['other'] = resid_weight if resid_weight > 0 else 0.0
         return data
+

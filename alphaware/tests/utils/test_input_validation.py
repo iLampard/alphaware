@@ -47,7 +47,7 @@ class TestInputValidation(TestCase):
                             INDEX_INDUSTRY_WEIGHT,
                             pd.DataFrame([1, 2],
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
-                                                                          names=['tradeDate', 'industry'])
+                                                                          names=['tradeDate', 'industry_code'])
                                          )),
                            (pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date')),
                             OutputDataFormat.PITVOT_TABLE_DF,

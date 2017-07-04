@@ -25,5 +25,5 @@ class TestBenchmark(TestCase):
         benchmark = Benchmark(name='test', industry_weight=industry_weight, hist_return=hist_return)
 
         calculated = benchmark.get_industry_weight_on_date('2014-01-30')
-        expected = pd.Series([0.1, 0.2, 99.7], index=pd.Index(['a', 'b', 'other'], name='industry'), name='weight')
+        expected = pd.Series([0.1, 0.2, 99.7], index=pd.Index(['a', 'b', 'other'], name='industry_code'), name='weight')
         assert_series_equal(calculated, expected)
