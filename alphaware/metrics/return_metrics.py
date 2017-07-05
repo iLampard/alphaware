@@ -8,6 +8,7 @@ from argcheck import (expect_types,
 from ..enums import (FreqType)
 from ..utils import (ensure_cumul_return,
                      ensure_noncumul_return,
+                     group_by_freq,
                      fig_style)
 from ..const import (SIMPLE_STAT_FUNCS,
                      FACTOR_STAT_FUNCS,
