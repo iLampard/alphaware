@@ -6,7 +6,10 @@ from datetime import datetime
 import numpy as np
 from argcheck import expect_types
 from PyFin.DateUtilities import Date
-from ..enums import OutputDataFormat
+from empyrical import cum_returns
+from ..enums import (OutputDataFormat,
+                     ReturnType)
+from ..const import RETURN
 
 
 @expect_types(date=(str, datetime, Date))
@@ -77,20 +80,20 @@ def ensure_np_array(func, argname, arg):
 
 def ensure_cumul_return(func, argname, arg):
     if not isinstance(arg, RETURN):
-        return
-    if arg.type == ReturnType.Cumul:
         return arg
+    if arg.type == ReturnType.Cumul:
+        return arg.data
     else:
         data_ = cum_returns(arg.data, starting_value=1.0)
-        return RETURN(data_, ReturnType.Non_Cumul)
+        return data_
 
 
 def ensure_noncumul_return(func, argname, arg):
     if not isinstance(arg, RETURN):
-        return
-    if arg.type == ReturnType.Non_Cumul:
         return arg
+    if arg.type == ReturnType.Non_Cumul:
+        return arg.data
     else:
         data_ = arg.data.pct_change()
         data_.dropna(inplace=True)
-        return RETURN(data_, ReturnType.Cumul)
+        return data_

@@ -10,23 +10,30 @@ from empyrical import (annual_return,
                        beta,
                        alpha)
 
-INDEX_FACTOR = namedtuple('MULTI_INDEX_FACTOR', ['date_index', 'sec_index', 'full_index', 'col_score'])
+INDEX_FACTOR = namedtuple('INDEX_FACTOR', ['date_index', 'sec_index', 'full_index', 'col_score'])
 INDEX_FACTOR.date_index = 'tradeDate'
 INDEX_FACTOR.sec_index = 'secID'
 INDEX_FACTOR.full_index = ['tradeDate', 'secID']
 INDEX_FACTOR.col_score = 'score'
 
-INDEX_INDUSTRY_WEIGHT = namedtuple('MULTI_INDEX_INDUSTRY_WEIGHT',
+INDEX_INDUSTRY_WEIGHT = namedtuple('INDEX_INDUSTRY_WEIGHT',
                                    ['date_index', 'industry_index', 'full_index', 'col_name'])
 INDEX_INDUSTRY_WEIGHT.date_index = 'tradeDate'
 INDEX_INDUSTRY_WEIGHT.industry_index = 'industry_code'
 INDEX_INDUSTRY_WEIGHT.full_index = ['tradeDate', 'industry_code']
 INDEX_INDUSTRY_WEIGHT.col_name = 'weight'
 
-INDEX_SELECTOR = namedtuple('MULTI_INDEX_SELECTOR', ['date_index', 'sec_index', 'col_name'])
+INDEX_SELECTOR = namedtuple('INDEX_SELECTOR', ['date_index', 'sec_index', 'col_name'])
 INDEX_SELECTOR.date_index = 'tradeDate'
 INDEX_SELECTOR.sec_index = 'secID'
 INDEX_SELECTOR.col_name = 'weight'
+
+INDEX_RETURN = namedtuple('INDEX_RETURN', ['date_index', 'hedged_return', 'unhedged_return', 'benchmark_return'])
+INDEX_RETURN.date_index = 'tradeDate'
+INDEX_RETURN.hedged_return = 'hedged_return'
+INDEX_RETURN.unhedged_return = 'unhedged_return'
+INDEX_RETURN.benchmark_return = 'benchmark_return'
+
 
 RETURN = namedtuple('RETURN', ['data', 'type'])
 

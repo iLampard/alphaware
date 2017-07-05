@@ -54,3 +54,9 @@ class OutputDataFormat(IntEnum):
 class SelectionMethod(StrEnum):
     BRUTAL = 'brutal'
     INDUSTRY_NEUTRAL = 'industry_neutral'
+
+
+@unique
+class ReturnType(IntEnum):
+    Non_Cumul = 0
+    Cumul = 1
