@@ -17,7 +17,8 @@ from sklearn.base import (BaseEstimator,
 from alphaware.preprocess import (FactorTransformer,
                                   FactorContainer,
                                   Factor)
-from alphaware.pipeline import AlphaPipeline
+from alphaware.pipeline import (AlphaPipeline,
+                                make_alpha_pipeline)
 from alphaware.enums import (FactorType,
                              FactorNormType)
 
@@ -120,6 +121,19 @@ class TestPipeline(TestCase):
         pipeline = AlphaPipeline([('multi', TransMulti2()),
                                   ('div', TransDiv4())])
         pipeline.set_params(multi__out_container=True)
+        calculated = pipeline.fit_transform(self.factor_container)
+        index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
+                                           names=['tradeDate', 'secID'])
+        expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
+                                 'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
+                                 'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
+                                 'test4': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55]},
+                                index=index)
+        assert_frame_equal(calculated, expected)
+
+    def test_make_alpha_pipeline(self):
+        pipeline = make_alpha_pipeline(TransMulti2(), TransDiv4())
+        pipeline.set_params(transmulti2__out_container=True)
         calculated = pipeline.fit_transform(self.factor_container)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
                                            names=['tradeDate', 'secID'])

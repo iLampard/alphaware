@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import (_name_estimators,
+                              Pipeline)
 from sklearn.utils import tosequence
 import six
 from sklearn_pandas.pipeline import _call_fit
@@ -69,3 +70,7 @@ class AlphaPipeline(Pipeline):
         else:
             return _call_fit(self.steps[-1][-1].fit,
                              fc_fit, y, **fit_params).transform(fc_fit)
+
+
+def make_alpha_pipeline(*steps):
+    return AlphaPipeline(_name_estimators(steps))
