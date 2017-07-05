@@ -4,8 +4,8 @@ import pandas as pd
 from argcheck import (expect_types,
                       optional)
 from PyFin.Utilities import pyFinAssert
-from ..const import INDEX_FACTOR
-from ..enums import (FreqType,
+from alphaware.const import INDEX_FACTOR
+from alphaware.enums import (FreqType,
                      OutputDataFormat)
 
 
@@ -46,3 +46,9 @@ def group_by_freq(data, freq=FreqType.EOM):
         return data_.groupby(pd.TimeGrouper(freq='M'))
     elif freq == FreqType.EOY:
         return data_.groupby(pd.TimeGrouper(freq='A'))
+    elif freq == FreqType.EOQ:
+        return data_.groupby(pd.TimeGrouper(freq='Q'))
+
+
+
+

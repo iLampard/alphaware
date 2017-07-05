@@ -118,7 +118,7 @@ def group_perf_stat(strat_return, freq=FreqType.EOY, **kwargs):
     stat = pd.DataFrame()
     for name, group in group_return:
         stat_ = _perf_stat(group[group.columns[0]], risk_free=risk_free)
-        stat_.name = name.year
-        stat.join(stat_)
+        stat_.name = name
+        stat = stat.append(stat_)
 
-    return stat.dropna(axis=1)
+    return stat.dropna(axis=1).T
