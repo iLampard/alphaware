@@ -26,9 +26,6 @@ class FactorTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def _build_mapper(self, factor_container):
-        """
-        https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
-        """
         raise NotImplementedError
 
     @preprocess(factor_container=ensure_factor_container)
