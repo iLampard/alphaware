@@ -193,24 +193,25 @@ class FactorContainer(object):
 
     @property
     def industry_code(self):
-        for key in self.property:
-            if self.property[key]['type'] == FactorType.INDUSTY_CODE:
-                return self.data[key]
-        return None
+        key = filter(lambda x: self.property[x]['type'] == FactorType.INDUSTY_CODE, self.names)
+        return self.data[key]
 
     @property
     def score(self):
-        for key in self.property:
-            if self.property[key]['type'] == FactorType.SCORE:
-                return self.data[key]
-        return None
+        key = filter(lambda x: self.property[x]['type'] == FactorType.SCORE, self.names)
+        return self.data[key]
 
     @property
     def mkt_cap(self):
-        for key in self.property:
-            if self.property[key]['type'] == FactorType.ALPHA_FACTOR_MV:
-                return self.data[key]
-        return None
+        key = filter(lambda x: self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV, self.names)
+        return self.data[key]
+
+    @property
+    def alpha_factor_col(self):
+        def _is_alpha_factor(x):
+            return self.property[x]['type'] == FactorType.ALPHA_FACTOR or \
+                   self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV
+        return filter(_is_alpha_factor, self.names)
 
     @preprocess(data_=ensure_np_array)
     def replace_data(self, data_):

@@ -14,4 +14,13 @@ class FactorIC(FactorTransformer):
         super(FactorIC, self).__init__(copy=copy, out_container=out_container)
 
     def transform(self, factor_container):
-        pass
+
+        data_df = factor_container.data
+
+
+        factor_container.data = data_df
+        if self.out_container:
+            return factor_container
+        else:
+            return factor_container.data
+
