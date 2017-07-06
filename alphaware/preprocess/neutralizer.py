@@ -63,8 +63,8 @@ class Neutralizer(BaseEstimator, TransformerMixin):
 
 
 class FactorNeutralizer(FactorTransformer):
-    def __init__(self, copy=True, groupby_date=True, out_container=False):
-        super(FactorNeutralizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
+    def __init__(self, copy=True, out_container=False):
+        super(FactorNeutralizer, self).__init__(copy=copy, out_container=out_container)
 
     def _build_mapper(self, factor_container, **kwargs):
         data_mapper_by_date = pd.Series()
@@ -96,13 +96,10 @@ class FactorNeutralizer(FactorTransformer):
     def transform(self, factor_container, **kwargs):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
-        if not self.groupby_date:
-            neutralize_data_agg = self.df_mapper.fit_transform(factor_container.data)
-        else:
-            tiaocang_date = factor_container.tiaocang_date
-            neutralize_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
-                               tiaocang_date]
-            neutralize_data_agg = np.vstack(neutralize_data)
+        tiaocang_date = factor_container.tiaocang_date
+        neutralize_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
+                           tiaocang_date]
+        neutralize_data_agg = np.vstack(neutralize_data)
         factor_container.data = pd.DataFrame(neutralize_data_agg,
                                              index=factor_container.data.index,
                                              columns=factor_container.data.columns)

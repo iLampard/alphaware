@@ -11,8 +11,7 @@ from .factor_container import ensure_factor_container
 
 
 class FactorTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self, copy=True, groupby_date=True, out_container=False):
-        self.groupby_date = groupby_date
+    def __init__(self, copy=True, out_container=False):
         self.copy = copy
         self.df_mapper = None
         self.out_container = out_container
@@ -36,13 +35,10 @@ class FactorTransformer(BaseEstimator, TransformerMixin):
     def transform(self, factor_container):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
-        if not self.groupby_date:
-            calc_data_agg = self.df_mapper.fit_transform(factor_container.data)
-        else:
-            tiaocang_date = factor_container.tiaocang_date
-            calc_data = [self.df_mapper.fit_transform(factor_container.data.loc[date_]) for date_ in
-                         tiaocang_date]
-            calc_data_agg = np.vstack(calc_data)
+        tiaocang_date = factor_container.tiaocang_date
+        calc_data = [self.df_mapper.fit_transform(factor_container.data.loc[date_]) for date_ in
+                     tiaocang_date]
+        calc_data_agg = np.vstack(calc_data)
         factor_container.data = pd.DataFrame(calc_data_agg,
                                              index=factor_container.data.index,
                                              columns=factor_container.data.columns)

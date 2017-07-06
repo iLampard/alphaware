@@ -91,16 +91,16 @@ class TestFactorImputer(TestCase):
 
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
                                            names=['tradeDate', 'secID'])
-        fi = FactorImputer(numerical_strategy=NAStrategy.MEAN, groupby_date=False)
+        fi = FactorImputer(numerical_strategy=NAStrategy.MEAN)
         calculated = fi.fit_transform(factor_test)
-        expected = pd.DataFrame({'test1': [1.0, 3.0, 3.0, 4.428571, 5.0, 5.0, 6.0, 8.0]}, index=index)
+        expected = pd.DataFrame({'test1': [1.0, 3.0, 3.0, 2.33333333333, 5.0, 5.0, 6.0, 8.0]}, index=index)
         assert_frame_equal(calculated, expected)
 
         fi.set_out_container(True)
         calculated = fi.fit_transform(factor_test)
         expected = FactorContainer(start_date='2014-01-30',
                                    end_date='2014-02-28')
-        factor = Factor(data=pd.DataFrame({'test1': [1.0, 3.0, 3.0, 4.428571, 5.0, 5.0, 6.0, 8.0]}, index=index),
+        factor = Factor(data=pd.DataFrame({'test1': [1.0, 3.0, 3.0, 2.33333333333, 5.0, 5.0, 6.0, 8.0]}, index=index),
                         name='test1')
         expected.add_factor(factor)
 

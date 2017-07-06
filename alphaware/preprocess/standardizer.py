@@ -8,8 +8,8 @@ from ..enums import FactorType
 
 
 class FactorStandardizer(FactorTransformer):
-    def __init__(self, copy=True, groupby_date=True, out_container=False, with_mean=True, with_std=True):
-        super(FactorStandardizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
+    def __init__(self, copy=True, out_container=False, with_mean=True, with_std=True):
+        super(FactorStandardizer, self).__init__(copy=copy, out_container=out_container)
         self.with_mean = with_mean
         self.with_std = with_std
 

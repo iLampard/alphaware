@@ -32,8 +32,8 @@ class Winsorizer(BaseEstimator, TransformerMixin):
 
 
 class FactorWinsorizer(FactorTransformer):
-    def __init__(self, quantile_range=(2.5, 97.5), copy=True, groupby_date=True, out_container=False):
-        super(FactorWinsorizer, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
+    def __init__(self, quantile_range=(2.5, 97.5), copy=True,out_container=False):
+        super(FactorWinsorizer, self).__init__(copy=copy, out_container=out_container)
         self.quantile_range = quantile_range
         self.q_max = None
         self.q_min = None

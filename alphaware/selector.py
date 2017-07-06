@@ -101,10 +101,9 @@ class Selector(FactorTransformer):
                  nb_select=10,
                  prop_select=0.1,
                  copy=True,
-                 groupby_date=True,
                  out_container=False,
                  **kwargs):
-        super(Selector, self).__init__(copy=copy, groupby_date=groupby_date, out_container=out_container)
+        super(Selector, self).__init__(copy=copy,out_container=out_container)
         self.method = method
         self.nb_select = nb_select
         self.prop_select = prop_select
@@ -136,16 +135,13 @@ class Selector(FactorTransformer):
     def transform(self, factor_container, **kwargs):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
-        if not self.groupby_date:
-            selector_data_agg = self.df_mapper.fit_transform(factor_container.data)
-        else:
-            tiaocang_date = factor_container.tiaocang_date
-            selector_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
+        tiaocang_date = factor_container.tiaocang_date
+        selector_data = [self.df_mapper[date_].fit_transform(factor_container.data.loc[date_]) for date_ in
                              tiaocang_date]
-            date_list = [[tiaocang_date[i]] * len(selector_data[i]) for i in range(len(selector_data))]
-            date_agg = list(chain.from_iterable(date_list))
-            selector_data_ = np.vstack(selector_data)
-            selector_data_agg = np.column_stack((date_agg, selector_data_))
+        date_list = [[tiaocang_date[i]] * len(selector_data[i]) for i in range(len(selector_data))]
+        date_agg = list(chain.from_iterable(date_list))
+        selector_data_ = np.vstack(selector_data)
+        selector_data_agg = np.column_stack((date_agg, selector_data_))
 
         data_df = pd.DataFrame(selector_data_agg)
         data_df.columns = [INDEX_FACTOR.date_index,
@@ -162,4 +158,51 @@ class Selector(FactorTransformer):
             return factor_container.data
 
 
+if __name__ == "__main__":
+    from unittest import TestCase
+    from datetime import datetime as dt
+    from parameterized import parameterized
+    import pandas as pd
+    from pandas.util.testing import assert_frame_equal
+    from alphaware.selector import (BrutalSelector,
+                                IndustryNeutralSelector,
+                                Selector)
+    from alphaware.enums import (FactorType,
+                             SelectionMethod)
+    from alphaware.preprocess import (Factor,
+                                  FactorContainer)
+    from alphaware.const import (INDEX_FACTOR,
+                             INDEX_INDUSTRY_WEIGHT)
 
+
+    index_weight = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['a', 'b', 'other']],
+                                              names=INDEX_INDUSTRY_WEIGHT.full_index)
+    industry_weight = pd.DataFrame([0.5, 0.4, 0.1, 0.5, 0.3, 0.2], index=index_weight)
+
+    index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004', '005']],
+                                       names=INDEX_FACTOR.full_index)
+    X = pd.DataFrame({'score': [2, 3, 3, 8, 4, 5, 9, 11, 2, 0],
+                      'industry_code': ['a', 'a', 'a', 'b', 'b', 'a', 'a', 'other', 'b', 'b']},
+                     index=index)
+
+    score = Factor(data=X['score'], name='score', property_dict={'type': FactorType.SCORE})
+    industry_code = Factor(data=X['industry_code'], name='industry_code',
+                           property_dict={'type': FactorType.INDUSTY_CODE})
+    fc = FactorContainer(start_date='2014-01-30', end_date='2014-02-28')
+    fc.add_factor(score)
+    fc.add_factor(industry_code)
+
+    calculated = Selector(industry_weight=industry_weight,
+                          method=SelectionMethod.INDUSTRY_NEUTRAL).fit_transform(fc)
+
+    index_exp = pd.MultiIndex.from_arrays(
+        [[dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 2, 28),
+          dt(2014, 2, 28), dt(2014, 2, 28), dt(2014, 2, 28)],
+         ['002', '003', '004', '005', '002', '001', '004', '005', '003']], names=['tradeDate', 'secID'])
+    expected = pd.DataFrame({'score': [3, 3, 8, 4, 9, 5, 2, 0, 11],
+                             'industry_code': ['a', 'a', 'b', 'b', 'a', 'a', 'b', 'b', 'other'],
+                             'weight': [0.25, 0.25, 0.2, 0.2, 0.25, 0.25, 0.15, 0.15, 0.2]},
+                            index=index_exp, dtype=object)
+    print calculated
+
+    expected = expected[['score', 'industry_code', 'weight']]
