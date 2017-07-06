@@ -194,17 +194,17 @@ class FactorContainer(object):
     @property
     def industry_code(self):
         key = filter(lambda x: self.property[x]['type'] == FactorType.INDUSTY_CODE, self.names)
-        return self.data[key]
+        return self.data[key[0]]
 
     @property
     def score(self):
         key = filter(lambda x: self.property[x]['type'] == FactorType.SCORE, self.names)
-        return self.data[key]
+        return self.data[key[0]]
 
     @property
     def mkt_cap(self):
         key = filter(lambda x: self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV, self.names)
-        return self.data[key]
+        return self.data[key[0]]
 
     @property
     def alpha_factor_col(self):
@@ -212,6 +212,12 @@ class FactorContainer(object):
             return self.property[x]['type'] == FactorType.ALPHA_FACTOR or \
                    self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV
         return filter(_is_alpha_factor, self.names)
+
+    @property
+    def fwd_return_col(self):
+        key = filter(lambda x: self.property[x]['type'] == FactorType.FWD_RETURN, self.names)
+        return key[0]
+
 
     @preprocess(data_=ensure_np_array)
     def replace_data(self, data_):
