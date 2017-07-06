@@ -44,10 +44,10 @@ def group_by_freq(data, freq=FreqType.EOM):
         return data_.groupby([lambda x: x.year, lambda x: x.month, lambda x: x.day])
     elif freq == FreqType.EOM:
         return data_.groupby(pd.TimeGrouper(freq='M'))
-    elif freq == FreqType.EOY:
-        return data_.groupby(pd.TimeGrouper(freq='A'))
     elif freq == FreqType.EOQ:
         return data_.groupby(pd.TimeGrouper(freq='Q'))
+    elif freq == FreqType.EOY:
+        return data_.groupby(pd.TimeGrouper(freq='A'))
 
 
 
