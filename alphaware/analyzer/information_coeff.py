@@ -4,7 +4,6 @@
 import pandas as pd
 import numpy as np
 from scipy import stats
-from argcheck import expect_types
 from alphaware.preprocess.factor_transformer import FactorTransformer
 import copy
 
@@ -20,8 +19,9 @@ class FactorIC(FactorTransformer):
         tiaocang_date = factor_container.tiaocang_date
         alpha_factor = data_df[factor_container.alpha_factor_col]
         fwd_return = data_df[factor_container.fwd_return_col]
-        calc_data = [stats.spearmanr(fwd_return[date_].values, alpha_factor.loc[date_].values) for date_ in
-                     tiaocang_date]
+
+
+        calc_data = [stats.spearmanr(fwd_return[date_], alpha_factor.loc[date_]) for date_ in tiaocang_date]
         return pd.DataFrame(data=calc_data, index=tiaocang_date)
 
 

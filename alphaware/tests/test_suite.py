@@ -3,6 +3,7 @@
 import os
 import sys
 import unittest
+import alphaware.tests.metrics as metrics
 import alphaware.tests.pipeline as pipeline
 import alphaware.tests.preprocess as preprocess
 import alphaware.tests.utils as utils
@@ -15,6 +16,8 @@ sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-2]))
 def test():
     print('Python ' + sys.version)
     suite = unittest.TestSuite()
+    tests = unittest.TestLoader().loadTestsFromTestCase(metrics.TestReturnMetrics)
+    suite.addTest(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(pipeline.TestPipeline)
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(preprocess.TestBenchmark)

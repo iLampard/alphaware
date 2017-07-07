@@ -211,13 +211,13 @@ class FactorContainer(object):
         def _is_alpha_factor(x):
             return self.property[x]['type'] == FactorType.ALPHA_FACTOR or \
                    self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV
+
         return filter(_is_alpha_factor, self.names)
 
     @property
     def fwd_return_col(self):
         key = filter(lambda x: self.property[x]['type'] == FactorType.FWD_RETURN, self.names)
-        return key[0]
-
+        return key
 
     @preprocess(data_=ensure_np_array)
     def replace_data(self, data_):
