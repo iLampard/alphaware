@@ -8,6 +8,7 @@ import alphaware.tests.pipeline as pipeline
 import alphaware.tests.preprocess as preprocess
 import alphaware.tests.utils as utils
 import alphaware.tests.test_selector as test_selector
+import alphaware.tests.analyzer as analyezer
 
 thisFilePath = os.path.abspath(__file__)
 sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-2]))
@@ -44,6 +45,8 @@ def test():
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(test_selector.TestSelector)
     suite.addTests(tests)
+    tests = unittest.TestLoader().loadTestsFromTestCase(analyezer.TestFactorIC)
+    suite.addTest(tests)
 
     res = unittest.TextTestRunner(verbosity=3).run(suite)
     if len(res.errors) >= 1 or len(res.failures) >= 1:
