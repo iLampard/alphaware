@@ -8,9 +8,9 @@ import numpy as np
 from datetime import datetime as dt
 from numpy.testing import assert_array_almost_equal
 from parameterized import parameterized
-from alphaware.preprocess import (Factor,
-                                  FactorContainer,
-                                  Winsorizer,
+from alphaware.base import (Factor,
+                            FactorContainer)
+from alphaware.preprocess import (Winsorizer,
                                   FactorWinsorizer)
 
 
@@ -45,4 +45,3 @@ class TestWinsorizer(TestCase):
                                  'test3': [3.0, 3.0, 3.0, 3.0, 3.0, 5.90396, 5.90396, 5.90396, 5.90396, 5.90004]},
                                 index=index)
         assert_frame_equal(calculated, expected)
-

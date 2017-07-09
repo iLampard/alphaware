@@ -5,9 +5,9 @@ from unittest import TestCase
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
 from datetime import datetime as dt
-from alphaware.preprocess import (Factor,
-                                  FactorContainer,
-                                  FactorStandardizer)
+from alphaware.base import (Factor,
+                                  FactorContainer)
+from alphaware.preprocess import FactorStandardizer
 from alphaware.enums import FactorType
 
 

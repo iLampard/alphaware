@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import StandardScaler
-from .factor_transformer import FactorTransformer
+from sklearn_pandas import DataFrameMapper
+from ..base import FactorTransformer
 from ..enums import FactorType
 
 

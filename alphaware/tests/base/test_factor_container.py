@@ -5,12 +5,12 @@ import pandas as pd
 import numpy as np
 from pandas.util.testing import assert_frame_equal
 from datetime import datetime as dt
-from ...preprocess import (Factor,
-                           FactorContainer)
-from ...enums import (FactorType,
-                      OutputDataFormat,
-                      FreqType,
-                      FactorNormType)
+from alphaware.base import (Factor,
+                            FactorContainer)
+from alphaware.enums import (FactorType,
+                             OutputDataFormat,
+                             FreqType,
+                             FactorNormType)
 
 
 class TestFactorContainter(TestCase):

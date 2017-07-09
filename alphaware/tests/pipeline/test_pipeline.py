@@ -14,9 +14,9 @@ import pandas as pd
 from pandas.util.testing import assert_frame_equal
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
-from alphaware.preprocess import (FactorTransformer,
-                                  FactorContainer,
-                                  Factor)
+from alphaware.base import (FactorTransformer,
+                            FactorContainer,
+                            Factor)
 from alphaware.pipeline import (AlphaPipeline,
                                 make_alpha_pipeline)
 from alphaware.enums import (FactorType,

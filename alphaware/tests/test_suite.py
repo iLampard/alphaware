@@ -3,12 +3,13 @@
 import os
 import sys
 import unittest
-import alphaware.tests.metrics as metrics
-import alphaware.tests.pipeline as pipeline
-import alphaware.tests.preprocess as preprocess
-import alphaware.tests.utils as utils
-import alphaware.tests.test_selector as test_selector
-import alphaware.tests.analyzer as analyezer
+from alphaware.tests import (base,
+                             metrics,
+                             pipeline,
+                             preprocess,
+                             utils,
+                             test_selector,
+                             analyzer)
 
 thisFilePath = os.path.abspath(__file__)
 sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-2]))
@@ -17,13 +18,13 @@ sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-2]))
 def test():
     print('Python ' + sys.version)
     suite = unittest.TestSuite()
+    tests = unittest.TestLoader().loadTestsFromTestCase(base.TestFactorContainter)
+    suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(metrics.TestReturnMetrics)
     suite.addTest(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(pipeline.TestPipeline)
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(preprocess.TestBenchmark)
-    suite.addTests(tests)
-    tests = unittest.TestLoader().loadTestsFromTestCase(preprocess.TestFactorContainter)
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(preprocess.TestFactorImputer)
     suite.addTests(tests)
@@ -45,7 +46,7 @@ def test():
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(test_selector.TestSelector)
     suite.addTests(tests)
-    tests = unittest.TestLoader().loadTestsFromTestCase(analyezer.TestFactorIC)
+    tests = unittest.TestLoader().loadTestsFromTestCase(analyzer.TestFactorIC)
     suite.addTest(tests)
 
     res = unittest.TextTestRunner(verbosity=3).run(suite)

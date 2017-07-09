@@ -2,8 +2,8 @@
 
 from unittest import TestCase
 import pandas as pd
-from alphaware.preprocess import (Factor,
-                                  FactorContainer)
+from alphaware.base import (Factor,
+                            FactorContainer)
 from alphaware.enums import (FactorType,
                              OutputDataFormat,
                              FreqType,
@@ -32,7 +32,7 @@ class TestFactorIC(TestCase):
         t = FactorIC()
         calculate = t.transform(fc)
         expected = pd.DataFrame(data=[[-1.0, -1.0, -1.0, -1.0], [1.0, 1.0, 1.0, 1.0]],
-                                index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], dtype='datetime64[ns]', freq=None),
-                                columns=['alpha1-fwd_return1', 'alpha2-fwd_return1', 'alpha1-fwd_return2',
-                                         'alpha2-fwd_return2'])
+                                index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], freq=None),
+                                columns=['alpha1_fwd_return1', 'alpha2_fwd_return1', 'alpha1_fwd_return2',
+                                         'alpha2_fwd_return2'])
         assert_frame_equal(calculate, expected)

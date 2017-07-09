@@ -40,8 +40,15 @@ class TestReturnMetrics(TestCase):
 
     def test_group_perf_stat(self):
         calculated = group_perf_stat(self.strategy, risk_free=0.02, freq=FreqType.EOQ)
-        expected = pd.DataFrame(data=[[-0.194346,-0.391711,0.439566,-0.126527],[-1.313148,-2.160582,3.146201,-1.187699],[-0.148000,-0.181299,-0.139713,-0.106531],[-24.203418,-18.283650,-16.019707,-25.555582]],index=['annual_return','calmar_ratio','max_drawdown','sharpe_ratio'],columns=pd.DatetimeIndex(['2005-03-31', '2005-06-30', '2005-09-30', '2005-12-31'], dtype='datetime64[ns]', freq=None))
+        expected = pd.DataFrame(
+            data=[[-0.194346, -0.391711, 0.439566, -0.126527], [-1.313148, -2.160582, 3.146201, -1.187699],
+                  [-0.148000, -0.181299, -0.139713, -0.106531], [-24.203418, -18.283650, -16.019707, -25.555582]],
+            index=['annual_return', 'calmar_ratio', 'max_drawdown', 'sharpe_ratio'],
+            columns=pd.DatetimeIndex(['2005-03-31', '2005-06-30', '2005-09-30', '2005-12-31'], dtype='datetime64[ns]',
+                                     freq=None))
         assert_frame_equal(calculated, expected)
         calculated = group_perf_stat(self.strategy, risk_free=0.04, freq=FreqType.EOY)
-        expected = pd.DataFrame(data=[-0.101456,-0.295517,-0.343317,-39.591727],index=['annual_return','calmar_ratio','max_drawdown','sharpe_ratio'],columns=pd.DatetimeIndex(['2005-12-31'], dtype='datetime64[ns]', freq=None))
-        assert_frame_equal(calculated,expected)
+        expected = pd.DataFrame(data=[-0.101456, -0.295517, -0.343317, -39.591727],
+                                index=['annual_return', 'calmar_ratio', 'max_drawdown', 'sharpe_ratio'],
+                                columns=pd.DatetimeIndex(['2005-12-31'], dtype='datetime64[ns]', freq=None))
+        assert_frame_equal(calculated, expected)

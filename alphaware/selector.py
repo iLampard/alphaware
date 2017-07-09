@@ -10,8 +10,8 @@ from sklearn_pandas import DataFrameMapper
 from PyFin.Utilities import pyFinAssert
 from argcheck import preprocess
 from itertools import chain
-from alphaware.preprocess import (ensure_factor_container,
-                                  FactorTransformer)
+from alphaware.base import (ensure_factor_container,
+                            FactorTransformer)
 from alphaware.enums import (FactorType,
                              SelectionMethod)
 from alphaware.const import (INDEX_SELECTOR,

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from argcheck import expect_element
 from sklearn.preprocessing import Imputer
 from sklearn.utils.validation import check_is_fitted
 from sklearn_pandas import (CategoricalImputer,
                             DataFrameMapper)
+
+from ..base import FactorTransformer
 from ..enums import (NAStrategy,
                      FactorType)
-from factor_transformer import FactorTransformer
 
 
 def _get_mask(X, value):

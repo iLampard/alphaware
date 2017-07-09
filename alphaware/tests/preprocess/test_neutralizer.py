@@ -8,9 +8,9 @@ from numpy.testing import (assert_array_equal,
                            assert_array_almost_equal)
 from pandas.util.testing import assert_frame_equal
 from datetime import datetime as dt
-from alphaware.preprocess import (Factor,
-                                  FactorContainer,
-                                  get_indicator_matrix,
+from alphaware.base import (Factor,
+                            FactorContainer)
+from alphaware.preprocess import (get_indicator_matrix,
                                   Neutralizer,
                                   FactorNeutralizer)
 from alphaware.enums import (FactorType,

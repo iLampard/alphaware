@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-
 import pandas as pd
-from scipy import stats
 from ..base import FactorTransformer
 import copy
 
 
-class FactorIC(FactorTransformer):
+class FactorQuantile(FactorTransformer):
     def __init__(self, copy=True, out_container=False):
-        super(FactorIC, self).__init__(copy=copy, out_container=out_container)
+        super(FactorQuantile, self).__init__(copy=copy, out_container=out_container)
 
     def transform(self, factor_container):
         if self.copy:
@@ -21,8 +19,8 @@ class FactorIC(FactorTransformer):
             fwd_return = data_df[fwd]
             for alpha in factor_container.alpha_factor_col:
                 alpha_factor = data_df[alpha]
-                calc_data = [stats.spearmanr(fwd_return.loc[date_], alpha_factor.loc[date_])[0] for date_ in
-                             tiaocang_date]
+                #TODO
+                calc_data = [0 for date_ in tiaocang_date]
                 result = pd.concat(
                     [result, pd.DataFrame(data=calc_data, index=tiaocang_date, columns=[alpha + '_' + fwd])], axis=1)
 

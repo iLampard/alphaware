@@ -3,14 +3,13 @@
 from unittest import TestCase
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
-from toolz import merge
 import numpy as np
 from datetime import datetime as dt
 from numpy.testing import assert_array_equal
+from alphaware.base import (Factor,
+                            FactorContainer)
 from alphaware.preprocess import (ExtCategoricalImputer,
-                                  FactorImputer,
-                                  Factor,
-                                  FactorContainer)
+                                  FactorImputer)
 from alphaware.enums import (NAStrategy,
                              FactorType)
 

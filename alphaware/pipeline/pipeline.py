@@ -4,7 +4,7 @@ from sklearn.pipeline import (_name_estimators,
 from sklearn.utils import tosequence
 import six
 from sklearn_pandas.pipeline import _call_fit
-from ..preprocess import FactorContainer
+from ..base import FactorContainer
 
 
 class AlphaPipeline(Pipeline):

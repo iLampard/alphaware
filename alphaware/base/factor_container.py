@@ -9,17 +9,17 @@ from PyFin.Utilities import pyFinAssert
 from argcheck import (expect_types,
                       optional,
                       preprocess)
-from ..utils import (ensure_datetime,
-                     ensure_pd_df,
-                     convert_df_format,
-                     get_tiaocang_date,
-                     ensure_np_array,
-                     ensure_pd_index_names)
-from ..enums import (FreqType,
-                     FactorType,
-                     OutputDataFormat,
-                     FactorNormType)
-from ..const import INDEX_FACTOR
+from alphaware.utils import (ensure_datetime,
+                             ensure_pd_df,
+                             convert_df_format,
+                             get_tiaocang_date,
+                             ensure_np_array,
+                             ensure_pd_index_names)
+from alphaware.enums import (FreqType,
+                             FactorType,
+                             OutputDataFormat,
+                             FactorNormType)
+from alphaware.const import INDEX_FACTOR
 
 _REQUIRED_FACTOR_PROPERTY = {'type': FactorType.ALPHA_FACTOR,
                              'data_format': OutputDataFormat.MULTI_INDEX_DF,

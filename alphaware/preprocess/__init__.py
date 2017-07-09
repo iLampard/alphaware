@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from.benchmark import Benchmark
-from .factor_container import (Factor,
-                               FactorContainer,
-                               ensure_factor_container)
-from .factor_transformer import FactorTransformer
+from .benchmark import Benchmark
 from .imputer import (ExtCategoricalImputer,
                       FactorImputer)
 from .winsorizer import (Winsorizer,
@@ -16,7 +12,6 @@ from .neutralizer import (get_indicator_matrix,
 
 __all__ = ['Benchmark',
            'Factor',
-           'FactorContainer',
            'ensure_factor_container',
            'FactorTransformer',
            'ExtCategoricalImputer',

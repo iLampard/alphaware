@@ -10,8 +10,8 @@ from alphaware.selector import (BrutalSelector,
                                 Selector)
 from alphaware.enums import (FactorType,
                              SelectionMethod)
-from alphaware.preprocess import (Factor,
-                                  FactorContainer)
+from alphaware.base import (Factor,
+                            FactorContainer)
 from alphaware.const import (INDEX_FACTOR,
                              INDEX_INDUSTRY_WEIGHT)
 

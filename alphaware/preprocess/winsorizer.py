@@ -6,7 +6,7 @@ from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
 from sklearn.utils.validation import FLOAT_DTYPES
-from .factor_transformer import FactorTransformer
+from ..base import FactorTransformer
 from ..enums import FactorType
 
 

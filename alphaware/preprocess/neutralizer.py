@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 
+import copy
+
 import numpy as np
 import pandas as pd
-import copy
-from sklearn_pandas import DataFrameMapper
+from argcheck import (preprocess,
+                      optionally)
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
 from sklearn.linear_model import LinearRegression
-from argcheck import (preprocess,
-                      optionally)
-from .factor_transformer import FactorTransformer
-from .factor_container import ensure_factor_container
-from ..utils import ensure_np_array
+from sklearn_pandas import DataFrameMapper
+
+from ..base import (FactorTransformer,
+                    ensure_factor_container)
 from ..enums import (FactorType,
                      FactorNormType)
+from ..utils import ensure_np_array
 
 
 @preprocess(industry_code=ensure_np_array, mkt_cap=optionally(ensure_np_array))
