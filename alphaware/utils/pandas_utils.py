@@ -49,6 +49,11 @@ def group_by_freq(data, freq=FreqType.EOM):
     elif freq == FreqType.EOY:
         return data_.groupby(pd.TimeGrouper(freq='A'))
 
-
-
+@expect_types(x=(pd.DataFrame,pd.Series))
+def quantile_calc(x, _quantiles, _bins):
+        if _quantiles is not None and _bins is None:
+            return pd.qcut(x, _quantiles, labels=False) + 1
+        elif _bins is not None and _quantiles is None:
+            return pd.cut(x, _bins, labels=False) + 1
+        raise ValueError('Either quantiles or bins should be provided')
 

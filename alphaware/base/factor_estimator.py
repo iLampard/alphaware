@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import copy
-import numpy as np
-import pandas as pd
+
 from sklearn.base import BaseEstimator
 from argcheck import (preprocess,
                       expect_types)
