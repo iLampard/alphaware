@@ -32,5 +32,5 @@ finance-python
 ## Install
 
 ``` python
-pip install WindAdapter
+pip install alphaware
 ```
