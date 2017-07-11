@@ -13,7 +13,7 @@ from alphaware.enums import (FactorType,
                              FactorNormType)
 
 
-class TestFactorContainter(TestCase):
+class TestFactorContainer(TestCase):
     def test_factor_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
                                            names=['tradeDate', 'secID'])
