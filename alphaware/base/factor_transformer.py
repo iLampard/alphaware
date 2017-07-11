@@ -43,3 +43,14 @@ class FactorTransformer(BaseEstimator, TransformerMixin):
             return factor_container
         else:
             return factor_container.data
+
+
+
+
+
+
+
+
+
+
+
