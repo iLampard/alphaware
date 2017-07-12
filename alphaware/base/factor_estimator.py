@@ -2,15 +2,12 @@
 
 
 from sklearn.base import BaseEstimator
-from abc import (ABCMeta,
-                 abstractmethod)
+from abc import abstractmethod
 
 
 class FactorEstimator(BaseEstimator):
-    __metaclass__ = ABCMeta
-
     def fit(self, factor_container, **kwargs):
-        return
+        return self
 
     @abstractmethod
     def estimate(self, factor_container):

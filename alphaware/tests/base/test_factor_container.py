@@ -64,7 +64,7 @@ class TestFactorContainer(TestCase):
         expected = pd.DataFrame(index=index_exp, data=[1, 2, 3, 4, 5, 6], columns=['test2'])
         assert_frame_equal(factor.data, expected)
 
-    def test_factor_containter_1(self):
+    def test_factor_container_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
                                            names=['tradeDate', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0])

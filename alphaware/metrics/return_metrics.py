@@ -107,11 +107,11 @@ def _perf_stat(strat_return, benchmark_return=None, risk_free=0.0):
 @preprocess(strat_return=ensure_noncumul_return)
 def group_perf_stat(strat_return, freq=FreqType.EOY, **kwargs):
     """
-    :param strat_return: daily non-cumul returns of
+    :param strat_return: pd.Series, RETURN, 日频非累积收益率序列
     :param freq: enum, FreqType, default=EOY
     :param kwargs: optional, risk_free: float, risk free rate used in perf stat, default=0.0
 
-    :return: 
+    :return: 按照给定频率返回区间内收益序列的 年化收益，最大回撤，calmar比率，夏普比率，信息比率，beta，alpha等
     """
     risk_free = kwargs.get('risk_free', 0.0)
     group_return = group_by_freq(strat_return, freq=freq)

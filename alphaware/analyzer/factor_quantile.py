@@ -4,7 +4,6 @@ import pandas as pd
 from alphaware.base import FactorEstimator
 
 
-
 class FactorQuantile(FactorEstimator):
     def __init__(self, quantiles=5):
         super(FactorQuantile, self).__init__()
@@ -20,7 +19,7 @@ class FactorQuantile(FactorEstimator):
                 result_quantiles[score.name + '_' + fwd_return.name + '_' + str(i + 1)] = factor[fwd_return.name][
                                                                                           i * len(
                                                                                               factor) / self.quantiles:(
-                                                                                                                       i + 1) * len(
+                                                                                                                           i + 1) * len(
                                                                                               factor) / self.quantiles].mean()
             result = pd.concat([result, pd.DataFrame(result_quantiles, index=[date_])], axis=0)
         return result
@@ -38,5 +37,3 @@ class FactorQuantile(FactorEstimator):
                     [result, calc_data], axis=1)
 
         return result
-
-
