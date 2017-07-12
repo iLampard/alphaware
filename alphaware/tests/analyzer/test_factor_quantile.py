@@ -8,12 +8,12 @@ from alphaware.enums import (FactorType,
                              OutputDataFormat,
                              FreqType,
                              FactorNormType)
-from alphaware.analyzer import FactorIC
+from alphaware.analyzer import FactorQuantile
 from pandas.util.testing import assert_frame_equal
 
 
-class TestFactorIC(TestCase):
-    def test_factor_ic(self):
+class TestFactorQuantile(TestCase):
+    def test_factor_quantile(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
                                            names=['tradeDate', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
@@ -29,10 +29,12 @@ class TestFactorIC(TestCase):
         factor_test4 = Factor(data=data2, name='fwd_return2', property_dict=test2_property)
 
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3, factor_test4])
-        t = FactorIC()
+        t = FactorQuantile(quantiles=2)
         calculate = t.estimate(fc)
-        expected = pd.DataFrame(data=[[-1.0, -1.0, -1.0, -1.0], [1.0, 1.0, 1.0, 1.0]],
-                                index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], freq=None),
-                                columns=['alpha1_fwd_return1', 'alpha2_fwd_return1', 'alpha1_fwd_return2',
-                                         'alpha2_fwd_return2'])
+        expected = pd.DataFrame(
+            data=[[3.0, 2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0], [3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0]],
+            index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], freq=None),
+            columns=['alpha1_fwd_return1_1', 'alpha1_fwd_return1_2', 'alpha2_fwd_return1_1', 'alpha2_fwd_return1_2',
+                     'alpha1_fwd_return2_1', 'alpha1_fwd_return2_2', 'alpha2_fwd_return2_1',
+                     'alpha2_fwd_return2_2'])
         assert_frame_equal(calculate, expected)

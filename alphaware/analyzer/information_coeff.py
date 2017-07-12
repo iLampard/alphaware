@@ -3,17 +3,16 @@
 
 import pandas as pd
 from scipy import stats
-from ..base import FactorTransformer
+from ..base import FactorEstimator
 import copy
 
 
-class FactorIC(FactorTransformer):
-    def __init__(self, copy=True, out_container=False):
-        super(FactorIC, self).__init__(copy=copy, out_container=out_container)
+class FactorIC(FactorEstimator):
+    def __init__(self):
+        super(FactorIC, self).__init__()
 
-    def transform(self, factor_container):
-        if self.copy:
-            factor_container = copy.deepcopy(factor_container)
+    def estimate(self, factor_container):
+
         data_df = factor_container.data
         tiaocang_date = factor_container.tiaocang_date
         result = pd.DataFrame()

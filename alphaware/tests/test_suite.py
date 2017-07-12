@@ -18,7 +18,7 @@ sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-2]))
 def test():
     print('Python ' + sys.version)
     suite = unittest.TestSuite()
-    tests = unittest.TestLoader().loadTestsFromTestCase(base.TestFactorContainter)
+    tests = unittest.TestLoader().loadTestsFromTestCase(base.TestFactorContainer)
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(metrics.TestReturnMetrics)
     suite.addTest(tests)
@@ -47,6 +47,8 @@ def test():
     tests = unittest.TestLoader().loadTestsFromTestCase(test_selector.TestSelector)
     suite.addTests(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(analyzer.TestFactorIC)
+    suite.addTest(tests)
+    tests = unittest.TestLoader().loadTestsFromTestCase(analyzer.TestFactorQuantile)
     suite.addTest(tests)
 
     res = unittest.TextTestRunner(verbosity=3).run(suite)
