@@ -40,8 +40,8 @@ data_mv = factor_load('2014-01-01', '2014-03-10', 'MV', sec_id='fullA', is_index
 ##### Factor
 
 *Factor*类用以保存因子的三个相关信息： 数据(data)， 名称(name)和属性字典(property_dict)
-- 数据默认是默认Multi-Index DataFrame格式， index是两列(date和secID)，因子值作为列
-- 名称是给予因子的名字，会作为作为数据的列名
+- 数据是默认Multi-Index DataFrame格式， index是两列(date和secID)，因子值作为列
+- 名称是赋予因子的名字，会作为作为数据的列名
 - 属性字典保存了因子的属性：本文提到因子实际上是广义的因子，所以需要进一步分别因子的类型，如alpha因子、行业代码、价格、当期收益、下期收益、因子得分等；还有比如进行中性化的方法，是使用行业中性还是行业市值中性。因子的类型、数据格式、中性化方法以及数据频率作为因子的必要属性，如果用户还有额外的属性也可以自定添加，最终形成一个属性字典储存在Factor实例中，具体可以见代码[Factor](https://github.com/iLampard/alphaware/blob/master/alphaware/base/factor_container.py)
 
 
