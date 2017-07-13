@@ -39,7 +39,7 @@ class TestExtCategoricalImputer(TestCase):
 class TestFactorImputer(TestCase):
     def test_imputer_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 3.0, 3.0, np.nan, 5.0, 5.0, 6.0, 8.0])
         factor_test1 = Factor(data=data1, name='test1')
 
@@ -52,7 +52,7 @@ class TestFactorImputer(TestCase):
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3])
 
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         calculated = FactorImputer(numerical_strategy=NAStrategy.MOST_FREQ).fit_transform(fc)
         expected = pd.DataFrame({'test1': [1.0, 3.0, 3.0, 3.0, 5.0, 5.0, 6.0, 8.0],
                                  'test2': [3.0, 2.0, 3.0, 7.0, 7.0, 6.0, 6.0, 6.0],
@@ -84,12 +84,12 @@ class TestFactorImputer(TestCase):
 
     def test_imputer_2(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         data = pd.DataFrame(index=index, data=[1.0, 3.0, 3.0, np.nan, 5.0, 5.0, 6.0, 8.0])
         factor_test = Factor(data=data, name='test1')
 
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         fi = FactorImputer(numerical_strategy=NAStrategy.MEAN)
         calculated = fi.fit_transform(factor_test)
         expected = pd.DataFrame({'test1': [1.0, 3.0, 3.0, 2.33333333333, 5.0, 5.0, 6.0, 8.0]}, index=index)

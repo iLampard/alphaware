@@ -24,7 +24,7 @@ class TestWinsorizer(TestCase):
 
     def test_factor_winsorizer(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004', '005']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 1.0, 1.2, 200.0, 0.9, 5.0, 5.0, 5.1, 5.9, 5.0])
         factor_test1 = Factor(data=data1, name='test1')
 
@@ -38,7 +38,7 @@ class TestWinsorizer(TestCase):
         quantile_range = (0.01, 0.99)
         calculated = FactorWinsorizer(quantile_range).fit_transform(fc)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004', '005']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         expected = pd.DataFrame({'test1': [0.90396, 0.90396, 0.90396, 0.90396, 0.90004, 5.0, 5.0, 5.0, 5.0, 5.0],
                                  'test2': [2.50396, 2.50004, 2.50396, 2.50396, 2.50396, -9.52876, -9.99524, -9.52876,
                                            -9.52876, -9.52876],

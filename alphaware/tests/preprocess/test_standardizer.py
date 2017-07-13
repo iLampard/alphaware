@@ -14,7 +14,7 @@ from alphaware.enums import FactorType
 class TestStandardizer(TestCase):
     def test_standardizer(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 1.0, 1.2, 200.0, 0.9, 5.0, 5.0, 5.1])
         factor_test1 = Factor(data=data1, name='test1')
 
@@ -27,7 +27,7 @@ class TestStandardizer(TestCase):
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3])
         calculated = FactorStandardizer().fit_transform(fc)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         expected = pd.DataFrame({'test1': [-0.578123937458, -0.578123937458, -0.575802154576, 1.73205002949,
                                            -1.73160039778, 0.558580773478, 0.558580773478, 0.614438850826],
                                  'test2': [-0.632455532034, -1.26491106407, 0.632455532034, 1.26491106407,

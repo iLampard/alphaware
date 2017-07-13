@@ -15,7 +15,7 @@ from pandas.util.testing import assert_frame_equal
 class TestFactorQuantile(TestCase):
     def test_factor_quantile(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
-                                           names=['tradeDate', 'secID'])
+                                           names=['date', 'secID'])
         data1 = pd.DataFrame(index=index, data=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
         factor_test1 = Factor(data=data1, name='alpha1')
         factor_test3 = Factor(data=data1, name='alpha2')

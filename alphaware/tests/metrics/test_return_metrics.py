@@ -17,17 +17,17 @@ class TestReturnMetrics(TestCase):
     def setUp(self):
         dir_name = os.path.dirname(os.path.abspath(__file__))
         return_data = pd.read_csv(dir_name + '//data//performance.csv')
-        return_data.columns = ['tradeDate', 'benchmark', 'strategy']
-        return_data['tradeDate'] = pd.to_datetime(return_data['tradeDate'], format='%Y/%m/%d')
-        return_data.set_index('tradeDate', inplace=True)
+        return_data.columns = ['date', 'benchmark', 'strategy']
+        return_data['date'] = pd.to_datetime(return_data['date'], format='%Y/%m/%d')
+        return_data.set_index('date', inplace=True)
 
         self.strategy = RETURN(data=return_data['strategy'], type=ReturnType.Cumul)
         self.benchmark = RETURN(data=return_data['benchmark'], type=ReturnType.Cumul)
 
         result = pd.read_csv(dir_name + "//data//result.csv")
-        result.columns = ['tradeDate', 'result1', 'result2', 'result3']
-        result['tradeDate'] = pd.to_datetime(result['tradeDate'], format='%Y/%m/%d')
-        result.set_index('tradeDate', inplace=True)
+        result.columns = ['date', 'result1', 'result2', 'result3']
+        result['date'] = pd.to_datetime(result['date'], format='%Y/%m/%d')
+        result.set_index('date', inplace=True)
         self.result = result
 
     def test_calc_alpha_return(self):

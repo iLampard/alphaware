@@ -47,12 +47,12 @@ class TestInputValidation(TestCase):
                             INDEX_INDUSTRY_WEIGHT,
                             pd.DataFrame([1, 2],
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
-                                                                          names=['tradeDate', 'industry_code'])
+                                                                          names=['date', 'industry_code'])
                                          )),
                            (pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date')),
                             OutputDataFormat.PITVOT_TABLE_DF,
                             INDEX_FACTOR,
-                            pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='tradeDate'))
+                            pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date'))
                             )])
     def test_ensure_pd_index_names(self, data, data_format, valid_index, expected):
         calculated = ensure_pd_index_names(data, data_format, valid_index)

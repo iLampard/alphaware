@@ -16,11 +16,11 @@ from ...enums import (FactorType,
 class TestBenchmark(TestCase):
     def test_benchmark(self):
         index_industry = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['a', 'b']],
-                                                    names=['tradeDate', 'secID'])
+                                                    names=['date', 'secID'])
         industry_weight = pd.DataFrame(index=index_industry, data=[0.1, 0.2, 0.3, 0.2, 0.3, 0.3])
 
         index_return = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
-                                                  names=['tradeDate', 'secID'])
+                                                  names=['date', 'secID'])
         hist_return = pd.DataFrame(index=index_return, data=[0.1, 0.05, 0.05, -0.05, 0.05, 0.06])
         benchmark = Benchmark(name='test', industry_weight=industry_weight, hist_return=hist_return)
 
