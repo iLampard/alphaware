@@ -6,7 +6,7 @@ tools for alpha research
 *alphaware*提供了多因子研究的算法接口以及工具合集
 
 *算法接口* 整体继承和模仿了scikit-learn
-- 通过自定义的FactorContainer类，清理和存储原始因子数据以及属性特征等
+- 通过自定义的Factor/FactorContainer类，清理和存储原始因子数据以及属性特征等
 - 提供了进行因子预处理、打分、筛选、计算IC等模块化运算的接口：接口的风格与scikit-learn的transformer/estimator类似，易于理解或者由用户自行拓展
 - 继承了sklearn的流水线(pipeline)功能：用户可自行组合各个步骤，放入pipeline中流水线式执行
 
@@ -15,15 +15,61 @@ tools for alpha research
 - 收益率的转换（累计与非累计），评价（各种比率）以及对冲收益率的计算、绘图等
 
 ## Quick Start
-TODO
+下面以一些例子来说明*alphaware*中的因子处理相关的重要函数以及类。
+
+首先，导入两个alpha因子的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
+``` python
+import pandas as pd
+from WindAdapter import factor_load
+from alphaware.base import (Factor,
+                            FactorContainer)
+from alphaware.enums import FactorType
+
+# 提取原始因子数据(全市场股票的月频PB, 市值因子）
+data_pb = factor_load('2014-01-01', '2014-03-10', 'PB', sec_id='fullA', is_index=True, save_file='pb.csv')
+data_mv = factor_load('2014-01-01', '2014-03-10', 'MV', sec_id='fullA', is_index=True, save_file='mv.csv')
+
+# 如果是从csv文件导入的话，假设前两列为时间和股票代码，最后一列为因子数值
+# data_pb = pd.read_csv('pb.csv', encoding='gbk')
+# data_mv = pd.read_csv('mv.csv', encoding='gbk')
+# data_pb.set_index(['date', 'secID'], inplace=True)
+# data_mv.set_index(['date', 'secID'], inplace=True)
+```
+
+
+##### Factor
+
+*Factor*类用以保存因子的三个相关信息： 数据(data)， 名称(name)和属性字典(property_dict)
+- 数据默认是默认Multi-Index DataFrame格式， index是两列(date和secID)，因子值作为列
+- 名称是给予因子的名字，会作为作为数据的列名
+- 属性字典保存了因子的属性：本文提到因子实际上是广义的因子，所以需要进一步分别因子的类型，如alpha因子、行业代码、价格、当期收益、下期收益、因子得分等；还有比如进行中性化的方法，是使用行业中性还是行业市值中性。因子的类型、数据格式、中性化方法以及数据频率作为因子的必要属性，如果用户还有额外的属性也可以自定添加，最终形成一个属性字典储存在Factor实例中，具体可以见代码[Factor](https://github.com/iLampard/alphaware/blob/master/alphaware/base/factor_container.py)
+
+
+``` python
+# 创建Factor实例，储存数据以及相关参数
+factor_pb = Factor(data=data_pb, name='PB', property_dict={'type': FactorType.ALPHA_FACTOR})
+factor_mv = Factor(data=data_mv, name='MV', property_dict={'type': FactorType.ALPHA_FACTOR_MV})
+
+```
+
 ##### FactorContainer
 
+``` python
+# 创建FactorContainer实例，加载所有的因子信息
+fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10')
+fc.add_factor(factor_pb)
+fc.add_factor(factor_mv)
+
+# 也可以一次性加载所有因子
+# fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10', factors=[factor_pb, factor_mv])
+```
+
 ##### FactorTransformer
-
+TODO
 ##### FactorEstimator
-
+TODO
 ##### AlphaPipeline
-
+TODO
 ##### Utilities
 
 - 调仓日计算： 默认的日历为天朝上交所交易日日历（引用自[Finance-Python](https://github.com/wegamekinglc/Finance-Python)），可根据起始日期，频率等计算调仓日期
