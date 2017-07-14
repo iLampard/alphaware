@@ -8,7 +8,7 @@ tools for alpha research
 *算法接口* 整体继承和模仿了scikit-learn
 - 通过自定义的Factor/FactorContainer类，清理和存储原始因子数据以及属性特征等
 - 提供了进行因子预处理、打分、筛选、计算IC等模块化运算的接口：接口的风格与scikit-learn的transformer/estimator类似，易于理解或者由用户自行拓展
-- 继承了sklearn的流水线(pipeline)功能：用户可自行组合各个步骤，放入pipeline中流水线式执行
+- 继承了scikit-learn的流水线(pipeline)功能：用户可自行组合各个步骤，放入pipeline中流水线式执行
 
 另外还提供了一些常用的工具函数
 - 调仓日的计算（给定周期，起始日期，根据交易日日历来计算）
@@ -25,12 +25,46 @@ tools for alpha research
     * 本文提到因子实际上是广义的因子，所以需要进一步分别因子的类型，如alpha因子、行业代码、价格、当期收益、下期收益、因子得分等；还有比如进行中性化的方法，是使用行业中性还是行业市值中性。
     * 因子的类型、数据格式、中性化方法以及数据频率作为因子的必要属性，如果用户还有额外的属性也可以自定添加，最终形成一个属性字典储存在Factor实例中，具体可以见代码[Factor](https://github.com/iLampard/alphaware/blob/master/alphaware/base/factor_container.py)
 
+
+
+``` python
+from alphaware.base import Factor
+from alphaware.enums import (OutputDataFormat,
+                             FreqType,
+                             FactorType,
+                             FactorNormType)
+                             
+# 假设data_roe为提取好的因子数据，格式为Multi-Index DataFrame
+# 把数据、名称、属性传入Factor类，创建实例
+# porperty_dict有若干默认item，可覆盖也可以与自定义的item合并
+factor_roe = Factor(data=data_roe, 
+                    name='ROE', 
+                    property_dict={'type': FactorType.ALPHA_FACTOR,
+                                   'data_format': OutputDataFormat.MULTI_INDEX_DF,
+                                   'norm_type': FactorNormType.Industry_Neutral,
+                                   'freq': FreqType.EOM})
+
+
+
+```
+
 ##### FactorContainer
 
 *FactorContainer*是存储若干*Factor*实例的容器，其具体作用是
 - 根据调仓日统一储存所有因子数据以及属性信息, 所有数据拼成一个若干列的Multi-Index DataFrame，方便后续处理
 - 提供了各种成员函数，返回有用的信息：如某类alpha因子的名称、列名、数据
 - 提供了*add_factor/remove_factor* 方法， 用以调整存储的Factor因子实例
+
+
+
+``` python
+from alphaware.base import FactorContainer
+
+fc = FactorContainer(start_date='2010-01-01', end_date='2010-03-01')
+fc.add_factor(factor_roe)
+fc.remove_factor(factor_roe)
+
+```
 
 ##### FactorTransformer
 
@@ -41,6 +75,23 @@ tools for alpha research
 
 *fit *和*transform*方法接受的入参为*FactorContainer*实例，返回类型可以是*FactorContainer*实例，也可以是纯因子数据(FactorContainer.data)
 
+``` python
+# 对FactorContainer携带的因子进行取极值化
+quantile_range = (0.01, 0.99)
+fc = FactorWinsorizer(quantile_range, out_container=True).fit_transform(fc)
+fc_data = FactorWinsorizer(quantile_range, out_container=False).fit_transform(fc)
+```        
+        
+已经实现的*FactorTransformer*有
+``` python
+FactorImputer       # 缺失数据填充（数值型和字符串型均可）
+FactorNeutralizer   # 因子中性化
+FactorStandardizer  # 因子标准化
+FactorWinsorizer    # 因子去极值化
+FactorQuantile      # 根据因子分组后对应组别的累计收益
+FactorIC            # 求因子IC系数
+Selector            # 根据得分选股（可选择是否按照行业比例挑选）
+```
 ##### FactorEstimator
 *FactorEstimator*的构造和使用类似于scikit-learn中的*estimator*，和*FactorTransformer*的区别
 - fit: 训练算法，设置内部参数
