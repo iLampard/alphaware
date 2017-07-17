@@ -73,10 +73,10 @@ fc.remove_factor(factor_roe)
 - transform: 对因子数据进行转换(按_不同调仓日_分别转换，然后拼合结果)
 - fit_transform: 合并fit和transform方法
 
-*fit *和*transform*方法接受的入参为*FactorContainer*实例，返回类型可以是*FactorContainer*实例，也可以是纯因子数据(FactorContainer.data)
+*fit *和* transform*方法接受的入参为*FactorContainer*实例，返回类型可以是*FactorContainer*实例，也可以是纯因子数据(FactorContainer.data)
 
 ``` python
-# 对FactorContainer携带的因子进行取极值化
+# 对FactorContainer携带的因子进行去极值化
 quantile_range = (0.01, 0.99)
 fc = FactorWinsorizer(quantile_range, out_container=True).fit_transform(fc)
 fc_data = FactorWinsorizer(quantile_range, out_container=False).fit_transform(fc)
