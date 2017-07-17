@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+  - "3.5"
+# command to install dependencies
+install:
+  - python setup.py install
+  - pip install coveralls
+  - pip install mock
+  - pip install --upgrade pip
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      pip install enum34;
+    fi
+# command to run tests
+script:
+  - coverage run alphaware/tests/test_suite.py
+after_success:
+  - coveralls

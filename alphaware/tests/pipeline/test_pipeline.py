@@ -11,12 +11,14 @@ from unittest import TestCase
 import copy
 from datetime import datetime as dt
 import pandas as pd
-from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import (assert_frame_equal,
+                                 assert_series_equal)
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
 from alphaware.base import (FactorTransformer,
                             FactorContainer,
-                            Factor)
+                            Factor,
+                            FactorEstimator)
 from alphaware.pipeline import (AlphaPipeline,
                                 make_alpha_pipeline)
 from alphaware.enums import (FactorType,
@@ -75,6 +77,21 @@ class TransMulti2(FactorTransformer):
             return x.data
 
 
+class PredMean(FactorEstimator):
+    """
+    Transformer with fit and predict methods
+    """
+
+    def fit(self, x, y=None):
+        return self
+
+    def predict(self, x):
+        x = copy.deepcopy(x)
+        alpha_factor_col = x.alpha_factor_col
+        ret = x.data[alpha_factor_col].mean()
+        return ret
+
+
 class TestPipeline(TestCase):
     def setUp(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004']],
@@ -98,7 +115,8 @@ class TestPipeline(TestCase):
 
     def test_error_raise(self):
         with self.assertRaises(TypeError):
-            AlphaPipeline([('no_transform', NoTransformT())])
+            AlphaPipeline([('no_transform', NoTransformT()),
+                           ('no_fit', NoFitT())])
 
         with self.assertRaises(TypeError):
             AlphaPipeline([('no_fit', NoFitT())])
@@ -130,6 +148,15 @@ class TestPipeline(TestCase):
                                  'test4': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55]},
                                 index=index)
         assert_frame_equal(calculated, expected)
+
+    def test_factor_tranformer_3(self):
+        pipeline = AlphaPipeline([('multi', TransMulti2()),
+                                  ('div', TransDiv4()),
+                                  ('pred', PredMean())])
+        pipeline.set_params(multi__out_container=True)
+        calculated = pipeline.predict(self.factor_container)
+        expected = pd.Series([1.3250, 2.8125, 1.3250], index=['test1', 'test2', 'test4'])
+        assert_series_equal(calculated, expected)
 
     def test_make_alpha_pipeline(self):
         pipeline = make_alpha_pipeline(TransMulti2(), TransDiv4())

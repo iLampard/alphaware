@@ -1,0 +1,4 @@
+include MANIFEST.in
+include .coveragerc
+recursive-include . *.txt
+recursive-include . *.md

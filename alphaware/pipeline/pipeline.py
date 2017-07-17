@@ -16,27 +16,6 @@ class AlphaPipeline(Pipeline):
         super(AlphaPipeline, self).__init__(steps)
         self._benchmark = kwargs.get('benchmark', None)
 
-        names, estimators = zip(*steps)
-        if len(dict(steps)) != len(steps):
-            raise ValueError(
-                "Provided step names are not unique: %s" % (names,))
-
-        # shallow copy of steps
-        self.steps = tosequence(steps)
-        estimator = estimators[-1]
-
-        for e in estimators:
-            if (not (hasattr(e, "fit") or hasattr(e, "fit_transform")) or not
-            hasattr(e, "transform")):
-                raise TypeError("All steps of the chain should "
-                                "be transforms and implement fit and transform"
-                                " '%s' (type %s) doesn't)" % (e, type(e)))
-
-        if not hasattr(estimator, "fit"):
-            raise TypeError("Last step of chain should implement fit "
-                            "'%s' (type %s) doesn't)"
-                            % (estimator, type(estimator)))
-
     def _pre_transform(self, factor_container, y=None, **fit_params):
         fit_params_steps = dict((step, {}) for step, _ in self.steps)
         for pname, pval in six.iteritems(fit_params):
@@ -71,6 +50,18 @@ class AlphaPipeline(Pipeline):
             return _call_fit(self.steps[-1][-1].fit,
                              fc_fit, y, **fit_params).transform(fc_fit)
 
+    def predict(self, factor_container, y=None, **fit_params):
+        fc_fit, fit_params = self._pre_transform(factor_container, y, **fit_params)
+        return self.steps[-1][-1].predict(fc_fit)
+
+    def fit_predict(self, factor_container, y=None, **fit_params):
+        fc_fit, fit_params = self._pre_transform(factor_container, y, **fit_params)
+        if hasattr(self.steps[-1][-1], "fit_predict"):
+            return _call_fit(self.steps[-1][-1].fit_predict,
+                             fc_fit, y, **fit_params)
+        else:
+            return _call_fit(self.steps[-1][-1].predict,
+                             fc_fit, y, **fit_params).transform(fc_fit)
 
 
 def make_alpha_pipeline(*steps):

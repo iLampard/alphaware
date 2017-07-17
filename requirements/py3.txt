@@ -1,0 +1,5 @@
+mock
+numpy>=1.10.1
+pandas>=0.18.0
+logbook
+argcheck
