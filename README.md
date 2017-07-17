@@ -6,23 +6,182 @@ tools for alpha research
 *alphaware*提供了多因子研究的算法接口以及工具合集
 
 *算法接口* 整体继承和模仿了scikit-learn
-- 通过自定义的FactorContainer类，清理和存储原始因子数据以及属性特征等
+- 通过自定义的Factor/FactorContainer类，清理和存储原始因子数据以及属性特征等
 - 提供了进行因子预处理、打分、筛选、计算IC等模块化运算的接口：接口的风格与scikit-learn的transformer/estimator类似，易于理解或者由用户自行拓展
-- 继承了sklearn的流水线(pipeline)功能：用户可自行组合各个步骤，放入pipeline中流水线式执行
+- 继承了scikit-learn的流水线(pipeline)功能：用户可自行组合各个步骤，放入pipeline中流水线式执行
 
 另外还提供了一些常用的工具函数
 - 调仓日的计算（给定周期，起始日期，根据交易日日历来计算）
 - 收益率的转换（累计与非累计），评价（各种比率）以及对冲收益率的计算、绘图等
 
 ## Quick Start
-TODO
+
+##### Factor
+
+*Factor*类用以保存因子的三个相关信息： 数据(data)， 名称(name)和属性字典(property_dict)
+- 数据是默认Multi-Index DataFrame格式， index是两列(date和secID)，因子值作为列
+- 名称是赋予因子的名字，会作为作为数据的列名
+- 属性字典保存了因子的属性
+    * 本文提到因子实际上是广义的因子，所以需要进一步分别因子的类型，如alpha因子、行业代码、价格、当期收益、下期收益、因子得分等；还有比如进行中性化的方法，是使用行业中性还是行业市值中性。
+    * 因子的类型、数据格式、中性化方法以及数据频率作为因子的必要属性，如果用户还有额外的属性也可以自定添加，最终形成一个属性字典储存在Factor实例中，具体可以见代码[Factor](https://github.com/iLampard/alphaware/blob/master/alphaware/base/factor_container.py)
+
+
+
+``` python
+from alphaware.base import Factor
+from alphaware.enums import (OutputDataFormat,
+                             FreqType,
+                             FactorType,
+                             FactorNormType)
+                             
+# 假设data_roe为提取好的因子数据，格式为Multi-Index DataFrame
+# 把数据、名称、属性传入Factor类，创建实例
+# porperty_dict有若干默认item，可覆盖也可以与自定义的item合并
+factor_roe = Factor(data=data_roe, 
+                    name='ROE', 
+                    property_dict={'type': FactorType.ALPHA_FACTOR,
+                                   'data_format': OutputDataFormat.MULTI_INDEX_DF,
+                                   'norm_type': FactorNormType.Industry_Neutral,
+                                   'freq': FreqType.EOM})
+
+
+
+```
+
 ##### FactorContainer
+
+*FactorContainer*是存储若干*Factor*实例的容器，其具体作用是
+- 根据调仓日统一储存所有因子数据以及属性信息, 所有数据拼成一个若干列的Multi-Index DataFrame，方便后续处理
+- 提供了各种成员函数，返回有用的信息：如某类alpha因子的名称、列名、数据
+- 提供了*add_factor/remove_factor* 方法， 用以调整存储的Factor因子实例
+
+
+
+``` python
+from alphaware.base import FactorContainer
+
+fc = FactorContainer(start_date='2010-01-01', end_date='2010-03-01')
+fc.add_factor(factor_roe)
+fc.remove_factor(factor_roe)
+
+```
 
 ##### FactorTransformer
 
+*FactorTransformer*的构造和使用类似于scikit-learn中的*transfomer*，主要包含三个方法
+- fit: 训练算法，设置内部参数
+- transform: 对因子数据进行转换(按_不同调仓日_分别转换，然后拼合结果)
+- fit_transform: 合并fit和transform方法
+
+*fit *和*transform*方法接受的入参为*FactorContainer*实例，返回类型可以是*FactorContainer*实例，也可以是纯因子数据(FactorContainer.data)
+
+``` python
+# 对FactorContainer携带的因子进行取极值化
+quantile_range = (0.01, 0.99)
+fc = FactorWinsorizer(quantile_range, out_container=True).fit_transform(fc)
+fc_data = FactorWinsorizer(quantile_range, out_container=False).fit_transform(fc)
+```        
+        
+已经实现的*FactorTransformer*有
+``` python
+FactorImputer       # 缺失数据填充（数值型和字符串型均可）
+FactorNeutralizer   # 因子中性化
+FactorStandardizer  # 因子标准化
+FactorWinsorizer    # 因子去极值化
+FactorQuantile      # 根据因子分组后对应组别的累计收益
+FactorIC            # 求因子IC系数
+Selector            # 根据得分选股（可选择是否按照行业比例挑选）
+```
 ##### FactorEstimator
+*FactorEstimator*的构造和使用类似于scikit-learn中的*estimator*，和*FactorTransformer*的区别
+- fit: 训练算法，设置内部参数
+- estimate: 对因子数据进行转换(按_不同调仓日_分别转换，然后拼合结果)
+
 
 ##### AlphaPipeline
+TODO
+
+下面以一些例子来说明*alphaware*中这几个类的用法。
+
+> 第一步，导入两个alpha因子的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
+``` python
+import pandas as pd
+from WindAdapter import factor_load
+from alphaware.base import (Factor,
+                            FactorContainer)
+from alphaware.enums import FactorType
+
+# 提取原始因子数据(全市场股票的月频PB, 市值因子）
+data_pb = factor_load('2014-01-01', '2014-03-10', 'PB', sec_id='fullA', is_index=True, save_file='pb.csv')
+data_mv = factor_load('2014-01-01', '2014-03-10', 'MV', sec_id='fullA', is_index=True, save_file='mv.csv')
+
+# 如果是从csv文件导入的话，假设前两列为时间和股票代码，最后一列为因子数值
+# data_pb = pd.read_csv('pb.csv', encoding='gbk')
+# data_mv = pd.read_csv('mv.csv', encoding='gbk')
+# data_pb['date'] = pd.to_datetime(data_pb['date'])
+# data_mv['date'] = pd.to_datetime(data_mv['date'])
+# data_pb.set_index(['date', ' secID'], inplace=True)
+# data_mv.set_index(['date', ' secID'], inplace=True)
+```
+
+> 第二步，把提取的因子数据以及性质保存在Factor实例中
+``` python
+# 创建Factor实例，储存数据以及相关参数
+factor_pb = Factor(data=data_pb, name='PB', property_dict={'type': FactorType.ALPHA_FACTOR, 'norm_type': FactorNormType.Industry_Neutral})
+factor_mv = Factor(data=data_mv, name='MV', property_dict={'type': FactorType.ALPHA_FACTOR_MV})
+
+```
+
+
+> 第三步，创建FactorContainer实例，设置好起始日期（或者调仓日期），加载所有的因子信息
+``` python
+# 创建FactorContainer实例，加载Factor
+fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10')
+fc.add_factor(factor_pb)
+fc.add_factor(factor_mv)
+
+# 也可以一次性加载所有因子
+# fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10', factors=[factor_pb, factor_mv])
+
+# 返回调仓日
+fc.tiaocang_date
+# [datetime.datetime(2014, 1, 30, 0, 0), datetime.datetime(2014, 2, 28, 0, 0)]
+
+# 返回alpha因子的列名
+fc.alpha_factor_col
+# ['PB', 'MV']
+
+```
+
+> 第四步，再次加载行业信息，然后对alpha因子进行缺失值填充和中性化处理(去极值化和标准化类似)
+``` python
+# 提取行业数据
+data_industry_code = factor_load('2014-01-01', '2014-03-10', 'SW_C1', sec_id='fullA', is_index=True, save_file='sw.csv')
+
+# 加载进FactorContainer
+factor_industry_code = Factor(data=data_industry_code, name='industry_code',
+                              property_dict={'type': FactorType.INDUSTY_CODE})
+fc.add_factor(factor_industry_code)
+
+# 使用FactorImputer对缺失数据进行填充
+# numerical_strategy=NAStrategy.MEDIAN: 对数字缺失使用中位数填充 
+# categorical_strategy=NAStrategy.CUSTOM, custom_value='other': 对文字缺失使用自定义('other')进行填充
+# out_container=True: 返回FactorContainer实例
+fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
+                   categorical_strategy=NAStrategy.CUSTOM,
+                   custom_value='other', 
+                   out_container=True).fit_transform(fc)
+                   
+# 使用FactorNeutralizer对alpha因子进行中性化处理
+# FactorNeutralizer会辨认出alpha因子以及对应的中性化方法（从因子属性property中），对每个alpha因子分别进行中性化处理
+# 同时保持非alpha因子（如行业代码）不变
+# 此处对PB因子进行市值和行业中性化，因为PB因子的property_dict={'norm_type'：FactorNormType.Industry_Neutral}
+# MV因子不做变化，因为MV因子的'norm_type'取默认值Null
+fc = FactorNeutralizer(out_container=True).fit_transform(fc)
+
+```
+
+
 
 ##### Utilities
 
