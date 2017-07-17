@@ -30,7 +30,7 @@ class TestFactorIC(TestCase):
 
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3, factor_test4])
         t = FactorIC()
-        calculate = t.estimate(fc)
+        calculate = t.predict(fc)
         expected = pd.DataFrame(data=[[-1.0, -1.0, -1.0, -1.0], [1.0, 1.0, 1.0, 1.0]],
                                 index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], freq=None),
                                 columns=['alpha1_fwd_return1', 'alpha2_fwd_return1', 'alpha1_fwd_return2',

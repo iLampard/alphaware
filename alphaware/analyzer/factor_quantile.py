@@ -21,7 +21,7 @@ class FactorQuantile(FactorEstimator):
             result = pd.concat([result, pd.DataFrame(result_quantiles, index=[date_])], axis=0)
         return result
 
-    def estimate(self, factor_container):
+    def predict(self, factor_container):
         data_df = factor_container.data
         tiaocang_date = factor_container.tiaocang_date
         result = pd.DataFrame()
