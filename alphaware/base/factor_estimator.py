@@ -10,5 +10,5 @@ class FactorEstimator(BaseEstimator):
         return self
 
     @abstractmethod
-    def estimate(self, factor_container):
+    def predict(self, factor_container):
         return

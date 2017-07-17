@@ -11,7 +11,7 @@ class FactorIC(FactorEstimator):
     def __init__(self):
         super(FactorIC, self).__init__()
 
-    def estimate(self, factor_container):
+    def predict(self, factor_container):
 
         data_df = factor_container.data
         tiaocang_date = factor_container.tiaocang_date

@@ -30,7 +30,7 @@ class TestFactorQuantile(TestCase):
 
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3, factor_test4])
         t = FactorQuantile(quantiles=2)
-        calculate = t.estimate(fc)
+        calculate = t.predict(fc)
         expected = pd.DataFrame(
             data=[[3.0, 2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0], [3.0, 7.0, 3.0, 7.0, 3.0, 7.0, 3.0, 7.0]],
             index=pd.DatetimeIndex(['2014-01-30', '2014-02-28'], freq=None),
