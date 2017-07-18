@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import numpy as np
 from argcheck import (expect_types,
                       optional)
 from PyFin.Utilities import pyFinAssert
@@ -57,3 +58,20 @@ def quantile_calc(x, quantiles, bins):
     elif bins is not None and quantiles is None:
         return pd.cut(x, bins, labels=False) + 1
     raise ValueError('Either quantiles or bins should be provided')
+
+
+@expect_types(x=(pd.DataFrame, pd.Series))
+def fwd_return(x, date_index=INDEX_FACTOR.date_index, sec_index=INDEX_FACTOR.sec_index, period=1):
+    """
+    每个日期和股票代码对应的未来收益
+    """
+    dates = sorted(set(x.index.get_level_values(date_index)))
+    ret = pd.DataFrame()
+    for i in range(len(dates) - period):
+        shift_date = dates[i + period]
+        data_concat = x.loc[shift_date].reset_index()
+        data_concat[date_index] = [dates[i]] * len(data_concat)
+        ret = pd.concat([ret, data_concat], axis=1)
+    ret.set_index([date_index, sec_index], inplace=True)
+    ret.columns = ['fwd_return']
+    return ret

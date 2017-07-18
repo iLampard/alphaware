@@ -14,7 +14,8 @@ from .input_validation import (ensure_pd_series,
 from .pandas_utils import (convert_df_format,
                            top,
                            group_by_freq,
-                           quantile_calc)
+                           quantile_calc,
+                           fwd_return)
 from .numpy_utils import (index_n_largest,
                           index_n_smallest)
 
@@ -34,7 +35,8 @@ __all__ = ['map_to_biz_day',
            'top',
            'group_by_freq',
            'fig_style',
-           'quantile_calc']
+           'quantile_calc',
+           'fwd_return']
 
 
 def fig_style(ax, legend, x_label, y_label, legend_loc='upper right'):

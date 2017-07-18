@@ -8,7 +8,10 @@ from pandas import (MultiIndex,
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 from alphaware.enums import OutputDataFormat, FreqType
 from alphaware.const import INDEX_FACTOR
-from alphaware.utils import convert_df_format, top, group_by_freq
+from alphaware.utils import (convert_df_format,
+                             top,
+                             group_by_freq,
+                             fwd_return)
 from datetime import datetime as dt
 
 
@@ -85,4 +88,29 @@ class TestPandasUtils(TestCase):
          ])
     def test_group_by_freq(self, data, group, freq, expected):
         calculated = group_by_freq(data, freq=freq).get_group(group)
+        assert_frame_equal(calculated, expected)
+
+    @parameterized.expand([(pd.Series(data=[1, 2, 3, 4],
+                                      index=pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['a', 'b']],
+                                                                       names=['date', 'secID'])),
+                            1,
+                            pd.DataFrame(data=[3, 4],
+                                         index=pd.MultiIndex.from_product([[dt(2014, 1, 30)], ['a', 'b']],
+                                                                          names=['date', 'secID']),
+                                         columns=['fwd_return'])
+                            ),
+                           (pd.DataFrame(data=[1, 2, 3, 4, 5, 6],
+                                         index=pd.MultiIndex.from_product(
+                                             [[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 30)], ['a', 'b']],
+                                             names=['date', 'secID'])),
+                            2,
+                            pd.DataFrame(data=[5, 6],
+                                         index=pd.MultiIndex.from_product([[dt(2014, 1, 30)], ['a', 'b']],
+                                                                          names=['date', 'secID']),
+                                         columns=['fwd_return'])
+                            )
+                           ])
+    def test_fwd_return(self, data, period, expected):
+        calculated = fwd_return(data, period=period)
+        print calculated
         assert_frame_equal(calculated, expected)

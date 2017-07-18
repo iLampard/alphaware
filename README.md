@@ -88,18 +88,25 @@ FactorImputer       # 缺失数据填充（数值型和字符串型均可）
 FactorNeutralizer   # 因子中性化
 FactorStandardizer  # 因子标准化
 FactorWinsorizer    # 因子去极值化
+```
+##### FactorEstimator
+*FactorEstimator*的构造和使用类似于scikit-learn中的*estimator*，和*FactorTransformer*的区别在于有*predict*方法
+- predict: 为了继承*pipeline*方便，此方法与scikit-learn中的*predict*方法同名
+    * 实际中主要用于处理计算相关的问题，并且计算的结果无法再载入*FactorContainer*中，比如计算因子IC（结果不再是Multi-Index DataFrame)
+    * 并不一定是实现’预测‘的功能
+
+已经实现的*FactorEstimator*有
+``` python
 FactorQuantile      # 根据因子分组后对应组别的累计收益
 FactorIC            # 求因子IC系数
 Selector            # 根据得分选股（可选择是否按照行业比例挑选）
 ```
-##### FactorEstimator
-*FactorEstimator*的构造和使用类似于scikit-learn中的*estimator*，和*FactorTransformer*的区别
-- fit: 训练算法，设置内部参数
-- estimate: 对因子数据进行转换(按_不同调仓日_分别转换，然后拼合结果)
 
 
 ##### AlphaPipeline
-TODO
+
+
+
 
 下面以一些例子来说明*alphaware*中这几个类的用法。
 
