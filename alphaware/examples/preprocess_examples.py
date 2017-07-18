@@ -40,12 +40,13 @@ fc.add_factor(factor_mv)
 
 
 # 提取行业数据
-# data_industry_code = factor_load('2014-01-01', '2014-03-10', 'SW_C1', sec_id='fullA', is_index=True, save_file='sw.csv')
+data_industry_code = factor_load('2014-01-01', '2014-03-10', 'SW_C1', sec_id='fullA', is_index=True, save_file='sw.csv')
 
-data_industry_code = pd.read_csv('sw.csv', encoding='gbk')
-data_industry_code['date'] = pd.to_datetime(data_industry_code['date'])
-data_industry_code.set_index(['date', ' secID'], inplace=True)
-factor_industry_code = Factor(data=data_industry_code, name='industry_code',
+# data_industry_code = pd.read_csv('sw.csv', encoding='gbk')
+# data_industry_code['date'] = pd.to_datetime(data_industry_code['date'])
+# data_industry_code.set_index(['date', ' secID'], inplace=True)
+factor_industry_code = Factor(data=data_industry_code,
+                              name='industry_code',
                               property_dict={'type': FactorType.INDUSTY_CODE})
 fc.add_factor(factor_industry_code)
 
@@ -55,4 +56,4 @@ fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
 
 fc_neu = FactorNeutralizer(out_container=True).fit_transform(fc)
 
-fc_neu.data.to_csv('fc_neu.csv')
+
