@@ -3,5 +3,6 @@ mock
 numpy
 pandas>=0.18.0
 logbook
+scipy
 argcheck
 toolz
