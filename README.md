@@ -1,6 +1,18 @@
 # alphaware
 tools for alpha research
 
+<table>
+<tr>
+  <td>Python version</td>
+  <td><img src="https://img.shields.io/badge/python-2.7-blue.svg"/>   <img src="https://img.shields.io/badge/python-3.5-blue.svg"/></td>
+  </tr>
+
+<tr>
+  <td>Build Status</td>
+  <td><img src="https://travis-ci.org/iLampard/alphaware.svg?branch=master" alt="build status" /></td>
+</tr>
+</table>
+
 ## Summary
 
 *alphaware*提供了多因子研究的算法接口以及工具合集
