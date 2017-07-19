@@ -4,7 +4,6 @@
 import pandas as pd
 from scipy import stats
 from ..base import FactorEstimator
-import copy
 
 
 class FactorIC(FactorEstimator):
@@ -12,7 +11,6 @@ class FactorIC(FactorEstimator):
         super(FactorIC, self).__init__()
 
     def predict(self, factor_container):
-
         data_df = factor_container.data
         tiaocang_date = factor_container.tiaocang_date
         result = pd.DataFrame()

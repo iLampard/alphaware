@@ -71,7 +71,15 @@ def fwd_return(x, date_index=INDEX_FACTOR.date_index, sec_index=INDEX_FACTOR.sec
         shift_date = dates[i + period]
         data_concat = x.loc[shift_date].reset_index()
         data_concat[date_index] = [dates[i]] * len(data_concat)
-        ret = pd.concat([ret, data_concat], axis=1)
+        ret = pd.concat([ret, data_concat], axis=0)
     ret.set_index([date_index, sec_index], inplace=True)
     ret.columns = ['fwd_return']
     return ret
+
+
+def load_factor_data_from_csv(csv_file, date_index=INDEX_FACTOR.date_index, sec_index=INDEX_FACTOR.sec_index):
+    data = pd.read_csv(csv_file, encoding='gbk')
+    data[date_index] = pd.to_datetime(data[date_index])
+    data.set_index([date_index, sec_index], inplace=True)
+    return data
+

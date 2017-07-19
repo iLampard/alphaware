@@ -112,5 +112,4 @@ class TestPandasUtils(TestCase):
                            ])
     def test_fwd_return(self, data, period, expected):
         calculated = fwd_return(data, period=period)
-        print calculated
         assert_frame_equal(calculated, expected)
