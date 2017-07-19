@@ -60,8 +60,8 @@ class AlphaPipeline(Pipeline):
             return _call_fit(self.steps[-1][-1].fit_predict,
                              fc_fit, y, **fit_params)
         else:
-            return _call_fit(self.steps[-1][-1].predict,
-                             fc_fit, y, **fit_params).transform(fc_fit)
+            return _call_fit(self.steps[-1][-1].fit,
+                             fc_fit, y, **fit_params).predict(fc_fit)
 
 
 def make_alpha_pipeline(*steps):

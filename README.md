@@ -95,6 +95,18 @@ FactorWinsorizer    # 因子去极值化
     * 实际中主要用于处理计算相关的问题，并且计算的结果无法再载入*FactorContainer*中，比如计算因子IC（结果不再是Multi-Index DataFrame)
     * 并不一定是实现’预测‘的功能
 
+
+``` python
+# 对FactorContainer携带的因子求IC系数
+# 处理极个别N/A, 有中位数替换
+fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
+                   out_container=True).fit_transform(fc)
+
+# 求因子IC系数
+ic = FactorIC().predict(fc)
+``` 
+代码可参见[FactorIC_example](/examples/ic_examples.py)
+
 已经实现的*FactorEstimator*有
 ``` python
 FactorQuantile      # 根据因子分组后对应组别的累计收益
@@ -105,10 +117,21 @@ Selector            # 根据得分选股（可选择是否按照行业比例挑�
 
 ##### AlphaPipeline
 
+*AlphaPipeline* 继承自scikit-learn的pipeline，用法与*pipeline*非常相似，可以将各个步骤流程化处理，如计算因子IC的例子可以改写成
 
-TODO
+``` python
+# 第一步，处理极个别N/A, 有中位数替换
+# 第二部，求因子IC系数
+pipeline = AlphaPipeline([('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN)),
+                         ('ic', FactorIC())])
+ic = pipeline.fit_predict(fc)
 
-下面以一些例子来说明*alphaware*中这几个类的用法。
+```
+
+
+##### 
+
+下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
 > 第一步，导入两个alpha因子的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
 ``` python

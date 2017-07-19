@@ -70,7 +70,7 @@ class FactorImputer(FactorTransformer):
                  custom_value=None,
                  categorical_strategy=NAStrategy.MOST_FREQ,
                  out_container=False):
-        super(FactorImputer, self).__init__(copy=copy,out_container=out_container)
+        super(FactorImputer, self).__init__(copy=copy, out_container=out_container)
         self.missing_values = missing_value
         self.copy = copy
         self.numerical_strategy = numerical_strategy
@@ -85,7 +85,7 @@ class FactorImputer(FactorTransformer):
         """
         https://github.com/pandas-dev/sklearn-pandas/blob/master/sklearn_pandas/dataframe_mapper.py 
         """
-        data =  factor_container.data
+        data = factor_container.data
         data_mapper = [([factor_name], self._get_mapper(factor_container.property[factor_name]['type']))
                        for factor_name in data.columns]
         return DataFrameMapper(data_mapper)
@@ -95,7 +95,7 @@ class FactorImputer(FactorTransformer):
             return ExtCategoricalImputer(strategy=self.categorical_strategy,
                                          custom_value=self.custom_value,
                                          copy=self.copy)
-        elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:
+        else:
             return Imputer(missing_values=self.missing_values,
                            strategy=self.numerical_strategy,
                            axis=self.axis,
