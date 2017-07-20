@@ -5,3 +5,5 @@ logbook
 scipy
 toolz
 argcheck
+Finance-Python
+empyrical

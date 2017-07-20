@@ -7,3 +7,5 @@ scipy
 toolz
 argcheck
 toolz
+Finance-Python
+empyrical
