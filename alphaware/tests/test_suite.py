@@ -3,6 +3,8 @@
 import os
 import sys
 import unittest
+thisFilePath = os.path.abspath(__file__)
+sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-3]))
 from alphaware.tests.base import TestFactorContainer
 from alphaware.tests.metrics import TestReturnMetrics
 from alphaware.tests.pipeline import TestPipeline
@@ -19,9 +21,6 @@ from alphaware.tests.utils import (TestDateUtils,
 from alphaware.tests.test_selector import TestSelector
 from alphaware.tests.analyzer import (TestFactorIC,
                                       TestFactorQuantile)
-
-thisFilePath = os.path.abspath(__file__)
-sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-3]))
 
 
 def test():
