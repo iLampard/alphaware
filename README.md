@@ -279,14 +279,10 @@ pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5])
 ic = pipeline.fit_predict(fc)
 
 
->>>
+# result
             MV_1_Fwd_Return  PB_1_Fwd_Return
-2014-01-30        -0.175162         0.017227
-2014-02-28        -0.093198         0.037323
-
-            MV_1_Fwd_Return  PB_1_Fwd_Return
-2014-01-30        -0.175162         0.032213
-2014-02-28        -0.093200         0.032046
+2014-01-30        -0.235823        -0.108877
+2014-02-28        -0.092717        -0.204371
 ```
 
 ##### Utilities
