@@ -88,7 +88,7 @@ class FactorNeutralizer(FactorTransformer):
     def _get_mapper(factor_type, factor_norm_type, industry_code, mkt_cap=None):
         if factor_type == FactorType.INDUSTY_CODE or factor_norm_type == FactorNormType.Null:
             return None
-        elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:
+        else:
             if factor_norm_type == FactorNormType.Industry_Cap_Neutral:
                 return Neutralizer(industry_code, mkt_cap)
             else:

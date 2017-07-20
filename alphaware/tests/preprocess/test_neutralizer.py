@@ -98,7 +98,8 @@ class TestNeutralizer(TestCase):
                               property_dict={'norm_type': FactorNormType.Industry_Cap_Neutral})
 
         data2 = pd.DataFrame(index=index, data=[2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1])
-        factor_test2 = Factor(data=data2, name='test2', property_dict={'type': FactorType.ALPHA_FACTOR_MV})
+        factor_test2 = Factor(data=data2, name='test2', property_dict={'type': FactorType.ALPHA_FACTOR_MV,
+                                                                       'norm_type': FactorNormType.Industry_Neutral})
 
         data3 = pd.DataFrame(index=index, data=['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'])
         factor_test3 = Factor(data=data3, name='test3', property_dict={'type': FactorType.INDUSTY_CODE})
@@ -113,7 +114,7 @@ class TestNeutralizer(TestCase):
                                            names=['date', 'secID'])
         expected = pd.DataFrame({'test1': [0.0983574180639, 8.881784197e-16, -0.306074564019, 0.207717145955,
                                            -2.10942374679e-15, 8.881784197e-16, -5.3290705182e-15, 0.0],
-                                 'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
+                                 'test2': [-0.166666666667, 0.0, 0.0333333333333, 0.133333333333, 0.0, -0.1, 0.0, 0.1],
                                  'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
                                  'test4': [-0.4, 0.0, -0.2, 0.6, 0.0, -0.05, 0.0, 0.05]},
                                 index=index,

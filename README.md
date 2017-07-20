@@ -145,32 +145,54 @@ ic = pipeline.fit_predict(fc)
 
 下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
-> 第一步，导入两个alpha因子的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
+> 第一步，导入两个alpha因子以及收益率的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
 ``` python
-import pandas as pd
-from WindAdapter import factor_load
 from alphaware.base import (Factor,
                             FactorContainer)
-from alphaware.enums import FactorType
+from alphaware.enums import (FactorType,
+                             FactorNormType,
+                             NAStrategy)
+from alphaware.utils import (fwd_return,
+                             load_factor_data_from_csv)
+from alphaware.analyzer import FactorIC
+from alphaware.preprocess import (FactorNeutralizer,
+                                  FactorStandardizer,
+                                  FactorWinsorizer,
+                                  FactorImputer)
+from alphaware.pipeline import AlphaPipeline
 
-# 提取原始因子数据(全市场股票的月频PB, 市值因子）
+# 加载MV和PB数据
+# 利用WindAdapter提取
 data_pb = factor_load('2014-01-01', '2014-03-10', 'PB', sec_id='fullA', is_index=True, save_file='pb.csv')
-data_mv = factor_load('2014-01-01', '2014-03-10', 'MV', sec_id='fullA', is_index=True, save_file='mv.csv')
+data_mv = factor_load('2014-01-01', '2014-03-10', 'MV', sec_id='fullA', is_index=True, save_file='mv.csv') / 100000000
 
 # 如果是从csv文件导入的话，假设前两列为时间和股票代码，最后一列为因子数值
-# data_pb = pd.read_csv('pb.csv', encoding='gbk')
-# data_mv = pd.read_csv('mv.csv', encoding='gbk')
-# data_pb['date'] = pd.to_datetime(data_pb['date'])
-# data_mv['date'] = pd.to_datetime(data_mv['date'])
-# data_pb.set_index(['date', ' secID'], inplace=True)
-# data_mv.set_index(['date', ' secID'], inplace=True)
+# data_mv = load_factor_data_from_csv('mv.csv') / 100000000
+# data_pb = load_factor_data_from_csv('pb.csv')
+
+# 创建Factor实例，储存数据以及相关参数
+factor_pb = Factor(data=data_pb,
+                   name='PB',
+                   property_dict={'type': FactorType.ALPHA_FACTOR, 'norm_type': FactorNormType.Industry_Neutral})
+factor_mv = Factor(data=data_mv,
+                   name='MV',
+                   property_dict={'type': FactorType.ALPHA_FACTOR_MV, 'norm_type': FactorNormType.Industry_Neutral})
+
+
+# 加载收益率数据
+# 月度收益数据
+data_return = load_factor_data_from_csv('return.csv')
+# 将数据改成未来1月收益
+data_return = fwd_return(data_return)
+factor_return = Factor(data=data_return, name='1_Fwd_Return', property_dict={'type': FactorType.FWD_RETURN})
+
 ```
 
 > 第二步，把提取的因子数据以及性质保存在Factor实例中
 ``` python
 # 创建Factor实例，储存数据以及相关参数
 factor_pb = Factor(data=data_pb, name='PB', property_dict={'type': FactorType.ALPHA_FACTOR, 'norm_type': FactorNormType.Industry_Neutral})
-factor_mv = Factor(data=data_mv, name='MV', property_dict={'type': FactorType.ALPHA_FACTOR_MV})
+factor_mv = Factor(data=data_mv, name='MV', property_dict={'type': FactorType.ALPHA_FACTOR_MV, 'norm_type': FactorNormType.Industry_Neutral})
 
 ```
 
@@ -195,7 +217,7 @@ fc.alpha_factor_col
 
 ```
 
-> 第四步，再次加载行业信息，然后对alpha因子进行缺失值填充和中性化处理(去极值化和标准化类似)
+> 第四步，再次加载行业信息，然后对alpha因子进行缺失值填充以及去极值化、标准化、中性化
 ``` python
 # 提取行业数据
 data_industry_code = factor_load('2014-01-01', '2014-03-10', 'SW_C1', sec_id='fullA', is_index=True, save_file='sw.csv')
@@ -213,17 +235,59 @@ fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                    categorical_strategy=NAStrategy.CUSTOM,
                    custom_value='other', 
                    out_container=True).fit_transform(fc)
+# 去极值化
+fc = FactorWinsorizer(quantile_range=(0.05, 0.95), 
+                      out_container=True).fit_transform(fc)
+
+# 标准化
+fc = FactorStandardizer(out_container=True).fit_transform(fc)
                    
-# 使用FactorNeutralizer对alpha因子进行中性化处理
+# 中性化
 # FactorNeutralizer会辨认出alpha因子以及对应的中性化方法（从因子属性property中），对每个alpha因子分别进行中性化处理
 # 同时保持非alpha因子（如行业代码）不变
 # 此处对PB因子进行市值和行业中性化，因为PB因子的property_dict={'norm_type'：FactorNormType.Industry_Neutral}
 # MV因子不做变化，因为MV因子的'norm_type'取默认值Null
 fc = FactorNeutralizer(out_container=True).fit_transform(fc)
-
 ```
 
+> 第五步，计算因子IC 
+```python
+# FactorEstimator返回的是DataFrame
+ic = FactorIC().predict(fc)
+```
 
+> 所有上面的步骤可以用AlphaPipeline流程化解决
+```python
+# pipeline
+# 第一步，处理极个别N/A, 有中位数替换
+step_1 = ('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
+                                   categorical_strategy=NAStrategy.CUSTOM,
+                                   custom_value='other'))
+# 第二部，去极值化
+step_2 = ('winsorize', FactorWinsorizer(quantile_range=(0.05, 0.95)))
+
+# 第三步，标准化
+step_3 = ('std', FactorStandardizer())
+
+# 第四步，中性化
+step_4 = ('neutralize', FactorNeutralizer())
+
+# 第五步，求因子IC
+step_5 = ('ic', FactorIC())
+
+pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5])
+ic = pipeline.fit_predict(fc)
+
+
+>>>
+            MV_1_Fwd_Return  PB_1_Fwd_Return
+2014-01-30        -0.175162         0.017227
+2014-02-28        -0.093198         0.037323
+
+            MV_1_Fwd_Return  PB_1_Fwd_Return
+2014-01-30        -0.175162         0.032213
+2014-02-28        -0.093200         0.032046
+```
 
 ##### Utilities
 
