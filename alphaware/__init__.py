@@ -6,7 +6,8 @@ from alphaware import (analyzer,
                        pipeline,
                        preprocess,
                        utils,
-                       selector)
+                       selector,
+                       tests)
 
 __all__ = ['version',
            'analyzer',
@@ -15,11 +16,12 @@ __all__ = ['version',
            'pipeline',
            'preprocess',
            'utils',
-           'selector']
+           'selector',
+           'tests']
 
 
 def version():
     return __version__
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
