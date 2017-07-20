@@ -26,7 +26,7 @@ install:
   - conda install pandas
   - conda install toolz
   - pip install empyrical
-  - pip install finance-python
+  - pip install --use-wheel finance-python
   - pip install coveralls
 # command to run tests
 script:

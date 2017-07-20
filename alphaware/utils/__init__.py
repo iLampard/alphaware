@@ -16,7 +16,8 @@ from .pandas_utils import (convert_df_format,
                            group_by_freq,
                            quantile_calc,
                            fwd_return,
-                           load_factor_data_from_csv)
+                           load_factor_data_from_csv,
+                           weighted_rank)
 from .numpy_utils import (index_n_largest,
                           index_n_smallest)
 
@@ -38,7 +39,8 @@ __all__ = ['map_to_biz_day',
            'fig_style',
            'quantile_calc',
            'fwd_return',
-           'load_factor_data_from_csv']
+           'load_factor_data_from_csv',
+           'weighted_rank']
 
 
 def fig_style(ax, legend, x_label, y_label, legend_loc='upper right'):

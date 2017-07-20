@@ -11,7 +11,8 @@ from alphaware.const import INDEX_FACTOR
 from alphaware.utils import (convert_df_format,
                              top,
                              group_by_freq,
-                             fwd_return)
+                             fwd_return,
+                             weighted_rank)
 from datetime import datetime as dt
 
 
@@ -113,3 +114,9 @@ class TestPandasUtils(TestCase):
     def test_fwd_return(self, data, period, expected):
         calculated = fwd_return(data, period=period)
         assert_frame_equal(calculated, expected)
+
+    # @parameterized.expand(
+    #     [(pd.DataFrame({'a': [1, 2, 3], 'b': [2, 4, 6]}), [True, False], None, pd.DataFrame([1.5, 3, 4.5]))])
+    # def test_weighted_rank(self, data, order, weight, expected):
+    #     calculated = weighted_rank(data, order, weight)
+    #     assert_frame_equal(calculated, expected)
