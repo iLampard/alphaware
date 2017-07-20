@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from pyfin.Utilities import pyFinWarning
+from PyFin.Utilities import pyFinWarning
 from sklearn_pandas import DataFrameMapper
 from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,

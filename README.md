@@ -145,7 +145,7 @@ ic = pipeline.fit_predict(fc)
 
 下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
-> 第一步，导入两个alpha因子以及收益率的数据，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
+> 第一步，导入两个alpha因子，此处以[WindAdapter](https://github.com/iLampard/WindAdapter)作为数据源，用户也可以自定义其他数据源或者是从csv等数据文件中读取
 ``` python
 from alphaware.base import (Factor,
                             FactorContainer)
@@ -179,33 +179,41 @@ factor_mv = Factor(data=data_mv,
                    property_dict={'type': FactorType.ALPHA_FACTOR_MV, 'norm_type': FactorNormType.Industry_Neutral})
 
 
+
+```
+
+> 第二步，以及月度收益数据以及行业代码
+``` python
+
 # 加载收益率数据
-# 月度收益数据
 data_return = load_factor_data_from_csv('return.csv')
 # 将数据改成未来1月收益
 data_return = fwd_return(data_return)
 factor_return = Factor(data=data_return, name='1_Fwd_Return', property_dict={'type': FactorType.FWD_RETURN})
 
-```
-
-> 第二步，把提取的因子数据以及性质保存在Factor实例中
-``` python
-# 创建Factor实例，储存数据以及相关参数
-factor_pb = Factor(data=data_pb, name='PB', property_dict={'type': FactorType.ALPHA_FACTOR, 'norm_type': FactorNormType.Industry_Neutral})
-factor_mv = Factor(data=data_mv, name='MV', property_dict={'type': FactorType.ALPHA_FACTOR_MV, 'norm_type': FactorNormType.Industry_Neutral})
+# 加载行业数据(早年的wind的行业代码不太全，可能用其他数据源的数据更好，此处仅做示例用)
+data_industry_code = factor_load('2014-01-01', '2014-03-01', 'SW_C1', sec_id='fullA', is_index=True,
+                                 save_file='sw_test.csv')
+factor_industry_code = Factor(data=data_industry_code,
+                              name='industry_code',
+                              property_dict={'type': FactorType.INDUSTY_CODE})
 
 ```
 
 
 > 第三步，创建FactorContainer实例，设置好起始日期（或者调仓日期），加载所有的因子信息
 ``` python
-# 创建FactorContainer实例，加载Factor
-fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10')
-fc.add_factor(factor_pb)
-fc.add_factor(factor_mv)
+fc = FactorContainer(start_date='2014-01-01',
+                     end_date='2014-03-01',
+                     factors=[factor_mv, factor_pb, factor_return, factor_industry_code])
 
-# 也可以一次性加载所有因子
+
+# 也可以分步加载所有因子
 # fc = FactorContainer(start_date='2014-01-01', end_date='2014-03-10', factors=[factor_pb, factor_mv])
+# fc.add_factor(factor_mv)
+# fc.add_factor(factor_pb)
+# fc.add_factor(factor_return)
+# fc.add_factor(factor_industry_code)
 
 # 返回调仓日
 fc.tiaocang_date
@@ -213,19 +221,12 @@ fc.tiaocang_date
 
 # 返回alpha因子的列名
 fc.alpha_factor_col
-# ['PB', 'MV']
+# ['MV', 'PB']
 
 ```
 
-> 第四步，再次加载行业信息，然后对alpha因子进行缺失值填充以及去极值化、标准化、中性化
+> 第四步，对alpha因子进行缺失值填充以及去极值化、标准化、中性化
 ``` python
-# 提取行业数据
-data_industry_code = factor_load('2014-01-01', '2014-03-10', 'SW_C1', sec_id='fullA', is_index=True, save_file='sw.csv')
-
-# 加载进FactorContainer
-factor_industry_code = Factor(data=data_industry_code, name='industry_code',
-                              property_dict={'type': FactorType.INDUSTY_CODE})
-fc.add_factor(factor_industry_code)
 
 # 使用FactorImputer对缺失数据进行填充
 # numerical_strategy=NAStrategy.MEDIAN: 对数字缺失使用中位数填充 
@@ -236,7 +237,7 @@ fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                    custom_value='other', 
                    out_container=True).fit_transform(fc)
 # 去极值化
-fc = FactorWinsorizer(quantile_range=(0.05, 0.95), 
+fc = FactorWinsorizer(quantile_range=(5, 95), 
                       out_container=True).fit_transform(fc)
 
 # 标准化
@@ -245,8 +246,7 @@ fc = FactorStandardizer(out_container=True).fit_transform(fc)
 # 中性化
 # FactorNeutralizer会辨认出alpha因子以及对应的中性化方法（从因子属性property中），对每个alpha因子分别进行中性化处理
 # 同时保持非alpha因子（如行业代码）不变
-# 此处对PB因子进行市值和行业中性化，因为PB因子的property_dict={'norm_type'：FactorNormType.Industry_Neutral}
-# MV因子不做变化，因为MV因子的'norm_type'取默认值Null
+# 此处对MV和PB因子进行行业中性化，因为PB因子的property_dict={'norm_type'：FactorNormType.Industry_Neutral}
 fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 ```
 
@@ -256,6 +256,8 @@ fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 ic = FactorIC().predict(fc)
 ```
 
+代码可参见[ic_windadapter](/example/ic_windadapter.py)
+
 > 所有上面的步骤可以用AlphaPipeline流程化解决
 ```python
 # pipeline
@@ -264,7 +266,7 @@ step_1 = ('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                                    categorical_strategy=NAStrategy.CUSTOM,
                                    custom_value='other'))
 # 第二部，去极值化
-step_2 = ('winsorize', FactorWinsorizer(quantile_range=(0.05, 0.95)))
+step_2 = ('winsorize', FactorWinsorizer(quantile_range=(5, 95)))
 
 # 第三步，标准化
 step_3 = ('std', FactorStandardizer())
@@ -278,12 +280,12 @@ step_5 = ('ic', FactorIC())
 pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5])
 ic = pipeline.fit_predict(fc)
 
-
 # result
             MV_1_Fwd_Return  PB_1_Fwd_Return
 2014-01-30        -0.235823        -0.108877
 2014-02-28        -0.092717        -0.204371
 ```
+代码可参见[ic_pipeline](/example/ic_pipeline.py)
 
 ##### Utilities
 

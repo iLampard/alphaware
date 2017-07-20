@@ -12,7 +12,7 @@ from alphaware.tests import (base,
                              analyzer)
 
 thisFilePath = os.path.abspath(__file__)
-sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-3]))
+sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-1]))
 
 
 def test():
