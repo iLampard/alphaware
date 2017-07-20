@@ -16,7 +16,7 @@ from alphaware.preprocess import (Winsorizer,
 
 class TestWinsorizer(TestCase):
     @parameterized.expand([(np.array([1, 2, 3, 10, 4, 1, 3]),
-                            (0.25, 97.5),
+                            (2.5, 97.5),
                             np.array([1, 2, 3, 9.1, 4, 1, 3]))])
     def test_winsorize(self, x, quantile_range, expected):
         calculated = Winsorizer(quantile_range).fit_transform(x)
@@ -35,13 +35,12 @@ class TestWinsorizer(TestCase):
         factor_test3 = Factor(data=data3, name='test3')
 
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2, factor_test3])
-        quantile_range = (0.01, 0.99)
+        quantile_range = (1, 99)
         calculated = FactorWinsorizer(quantile_range).fit_transform(fc)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004', '005']],
                                            names=['date', 'secID'])
-        expected = pd.DataFrame({'test1': [0.90396, 0.90396, 0.90396, 0.90396, 0.90004, 5.0, 5.0, 5.0, 5.0, 5.0],
-                                 'test2': [2.50396, 2.50004, 2.50396, 2.50396, 2.50396, -9.52876, -9.99524, -9.52876,
-                                           -9.52876, -9.52876],
-                                 'test3': [3.0, 3.0, 3.0, 3.0, 3.0, 5.90396, 5.90396, 5.90396, 5.90396, 5.90004]},
+        expected = pd.DataFrame({'test1': [1.0, 1.0, 1.2, 192.048, 0.904, 5.0, 5.0, 5.1, 5.868, 5.0],
+                                 'test2': [2.6, 2.504, 2.8, 2.896, 2.7, 1.9, -9.524, 2.096, 2.0, 1.9],
+                                 'test3': [3.0, 3.0, 29.0, 5.0, 4.0, 6.0, 6.96, 6.0, 6.0, 5.904]},
                                 index=index)
         assert_frame_equal(calculated, expected)

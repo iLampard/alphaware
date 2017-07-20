@@ -3,13 +3,13 @@
 import os
 import sys
 import unittest
-from ..tests import (base,
-                     metrics,
-                     pipeline,
-                     preprocess,
-                     utils,
-                     test_selector,
-                     analyzer)
+from alphaware.tests import (base,
+                             metrics,
+                             pipeline,
+                             preprocess,
+                             utils,
+                             test_selector,
+                             analyzer)
 
 thisFilePath = os.path.abspath(__file__)
 sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-3]))

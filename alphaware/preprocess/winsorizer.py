@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from pyfin.Utilities import pyFinWarning
 from sklearn_pandas import DataFrameMapper
 from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
@@ -12,6 +13,8 @@ from ..enums import FactorType
 
 class Winsorizer(BaseEstimator, TransformerMixin):
     def __init__(self, quantile_range=(2.5, 97.5), copy=True):
+        pyFinWarning(quantile_range[0] >= 1 and quantile_range[1] >= 1, Warning,
+                     'quantile_range value will be divided by 100 in calculation')
         self.quantile_range = quantile_range
         self.copy = copy
         self.q_max = None
@@ -32,7 +35,7 @@ class Winsorizer(BaseEstimator, TransformerMixin):
 
 
 class FactorWinsorizer(FactorTransformer):
-    def __init__(self, quantile_range=(2.5, 97.5), copy=True,out_container=False):
+    def __init__(self, quantile_range=(2.5, 97.5), copy=True, out_container=False):
         super(FactorWinsorizer, self).__init__(copy=copy, out_container=out_container)
         self.quantile_range = quantile_range
         self.q_max = None
@@ -47,5 +50,5 @@ class FactorWinsorizer(FactorTransformer):
     def _get_mapper(self, factor_type):
         if factor_type == FactorType.INDUSTY_CODE:
             return None
-        elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:
+        else:
             return Winsorizer(quantile_range=self.quantile_range, copy=self.copy)

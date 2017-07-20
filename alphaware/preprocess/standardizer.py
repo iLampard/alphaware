@@ -22,5 +22,5 @@ class FactorStandardizer(FactorTransformer):
     def _get_mapper(self, factor_type):
         if factor_type == FactorType.INDUSTY_CODE:
             return None
-        elif factor_type == FactorType.ALPHA_FACTOR or factor_type == FactorType.RETURN:
+        else:
             return StandardScaler(copy=self.copy, with_mean=self.with_mean, with_std=self.with_std)

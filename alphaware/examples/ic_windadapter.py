@@ -54,8 +54,9 @@ fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                    custom_value='other',
                    out_container=True).fit_transform(fc)
 
+
 # 第二部，去极值化
-fc = FactorWinsorizer(quantile_range=(0.05, 0.95),
+fc = FactorWinsorizer(quantile_range=(5, 95),
                       out_container=True).fit_transform(fc)
 
 # 第三步，标准化
