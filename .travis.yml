@@ -25,7 +25,7 @@ install:
   - conda install scipy
   - conda install pandas
   - conda install toolz
-  - conda install empyrical
+  - pip install empyrical
   - pip install finance-python
   - pip install coveralls
 # command to run tests
