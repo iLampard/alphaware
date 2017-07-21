@@ -3,6 +3,8 @@
 from unittest import TestCase
 from parameterized import parameterized
 import pandas as pd
+import numpy as np
+from numpy.testing.utils import assert_array_equal
 from pandas import (MultiIndex,
                     Index)
 from pandas.util.testing import assert_frame_equal, assert_series_equal
@@ -115,8 +117,12 @@ class TestPandasUtils(TestCase):
         calculated = fwd_return(data, period=period)
         assert_frame_equal(calculated, expected)
 
-    # @parameterized.expand(
-    #     [(pd.DataFrame({'a': [1, 2, 3], 'b': [2, 4, 6]}), [True, False], None, pd.DataFrame([1.5, 3, 4.5]))])
-    # def test_weighted_rank(self, data, order, weight, expected):
-    #     calculated = weighted_rank(data, order, weight)
-    #     assert_frame_equal(calculated, expected)
+    @parameterized.expand(
+        [(pd.DataFrame({'a': [1, 2, 3], 'b': [2, 4, 6]}), [1, 1], None, True, pd.DataFrame([0.0, 1.0, 2.0])),
+         (pd.DataFrame({'a': [1, 2, 3], 'b': [2, 4, 6]}), [1, 0], [0.6, 0.4], False, np.array([0.8, 1.0, 1.2]))])
+    def test_weighted_rank(self, data, order, weight, out_df, expected):
+        calculated = weighted_rank(data, order, weight, out_df)
+        if isinstance(expected, pd.DataFrame):
+            assert_frame_equal(calculated, expected)
+        else:
+            assert_array_equal(calculated, expected)

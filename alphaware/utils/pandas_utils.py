@@ -85,11 +85,12 @@ def load_factor_data_from_csv(csv_file, date_index=INDEX_FACTOR.date_index, sec_
 
 
 @expect_types(data=pd.DataFrame)
-def weighted_rank(data, ascend_order=None, weight=None):
+def weighted_rank(data, ascend_order=None, weight=None, out_df=False):
     nb_col = len(data.columns)
-    ascend_order = [True] * nb_col if ascend_order is None else ascend_order
+    ascend_order = [1] * nb_col if ascend_order is None else ascend_order
     weight = [1.0 / nb_col] * nb_col if weight is None else weight
-    ret = pd.DataFrame()
-    for col in data.columns:
-        ret['rank_' + col] = data[col].rank(ascend_order=ascend_order[data.columns.index(col)])
-    return ret.multiply(weight).sum(axis=1)
+    rank = np.zeros([len(data), nb_col])
+    for i in range(len(data.columns)):
+        rank[:, i] = np.argsort(data[data.columns[i]]) if ascend_order[i] else np.argsort(data[data.columns[i]])[::-1]
+    weight_rank = np.dot(rank, np.array(weight))
+    return pd.DataFrame(weight_rank, index=data.index) if out_df else weight_rank
