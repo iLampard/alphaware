@@ -157,3 +157,4 @@ class Selector(FactorEstimator):
         data_df.set_index([data_df.columns[0], data_df.columns[1]], inplace=True)
 
         return data_df
+

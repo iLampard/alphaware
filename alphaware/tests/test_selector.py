@@ -91,7 +91,7 @@ class TestSelector(TestCase):
         fc.add_factor(industry_code)
 
         calculated = Selector(industry_weight=industry_weight,
-                              method=SelectionMethod.INDUSTRY_NEUTRAL).predict(fc)
+                              method=SelectionMethod.INDUSTRY_NEUTRAL).fit(fc).predict(fc)
 
         index_exp = pd.MultiIndex.from_arrays(
             [[dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 2, 28),
