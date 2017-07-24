@@ -3,11 +3,13 @@
 import pandas as pd
 import numpy as np
 from argcheck import (expect_types,
-                      optional)
+                      optional,
+                      preprocess)
 from PyFin.Utilities import pyFinAssert
 from alphaware.const import INDEX_FACTOR
 from alphaware.enums import (FreqType,
                              OutputDataFormat)
+from .input_validation import ensure_pd_df
 
 
 @expect_types(data=(pd.Series, pd.DataFrame))
@@ -83,8 +85,8 @@ def load_factor_data_from_csv(csv_file, date_index=INDEX_FACTOR.date_index, sec_
     data.set_index([date_index, sec_index], inplace=True)
     return data
 
-
-@expect_types(data=pd.DataFrame)
+@preprocess(data=ensure_pd_df)
+@expect_types(data=(pd.DataFrame))
 def weighted_rank(data, ascend_order=None, weight=None, out_df=False):
     nb_col = len(data.columns)
     ascend_order = [1] * nb_col if ascend_order is None else ascend_order

@@ -3,6 +3,7 @@
 import os
 import sys
 import unittest
+
 thisFilePath = os.path.abspath(__file__)
 sys.path.append(os.path.sep.join(thisFilePath.split(os.path.sep)[:-3]))
 from alphaware.tests.base import TestFactorContainer
@@ -20,7 +21,8 @@ from alphaware.tests.utils import (TestDateUtils,
                                    TestPandasUtils)
 from alphaware.tests.test_selector import TestSelector
 from alphaware.tests.analyzer import (TestFactorIC,
-                                      TestFactorQuantile)
+                                      TestFactorQuantile,
+                                      TestFactorSimpleRank)
 
 
 def test():
@@ -57,6 +59,8 @@ def test():
     tests = unittest.TestLoader().loadTestsFromTestCase(TestFactorIC)
     suite.addTest(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(TestFactorQuantile)
+    suite.addTest(tests)
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestFactorSimpleRank)
     suite.addTest(tests)
 
     res = unittest.TextTestRunner(verbosity=3).run(suite)

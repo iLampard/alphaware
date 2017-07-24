@@ -168,7 +168,10 @@ class FactorContainer(object):
     @expect_types(factor=Factor)
     def add_factor(self, factor, overwrite=False):
         if overwrite is True:
-            self.remove_factor(factor.name)
+            try:
+                self.remove_factor(factor.name)
+            except Exception:
+                pass
         self._merge_factor(factor)
         self.data = self.data.loc[self._tiaocang_date]
         return

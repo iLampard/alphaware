@@ -27,6 +27,7 @@ install:
   - conda install toolz
   - conda install cython
   - pip install empyrical
+  - pip install argcheck
   - pip install --use-wheel finance-python
   - pip install coveralls
 # command to run tests
