@@ -11,7 +11,7 @@ from ..enums import FactorType
 
 
 class FactorSimpleRank(FactorTransformer):
-    def __init__(self,factor_name=None, weight=None, ascend_order=None,copy=True,out_container=False):
+    def __init__(self, factor_name=None, weight=None, ascend_order=None, copy=True, out_container=False):
         super(FactorSimpleRank, self).__init__()
         self.factor_name = factor_name
         self.weight = weight
@@ -47,7 +47,7 @@ class FactorSimpleRank(FactorTransformer):
             rank_date.set_index([INDEX_FACTOR.date_index, INDEX_FACTOR.sec_index], inplace=True)
             rank_df = pd.concat([rank_df, rank_date], axis=0)
 
-        rank_factor = Factor(data=rank_df, name=INDEX_FACTOR.col_score , property_dict={'type': FactorType.SCORE})
+        rank_factor = Factor(data=rank_df, name=INDEX_FACTOR.col_score, property_dict={'type': FactorType.SCORE})
         factor_container.add_factor(rank_factor, overwrite=True)
         if self.out_container:
             return factor_container

@@ -26,6 +26,7 @@ install:
   - conda install pandas
   - conda install toolz
   - conda install cython
+  - conda install matplotlib
   - pip install empyrical
   - pip install argcheck
   - pip install --use-wheel finance-python

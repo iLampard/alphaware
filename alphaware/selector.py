@@ -11,7 +11,7 @@ from PyFin.Utilities import pyFinAssert
 from argcheck import preprocess
 from itertools import chain
 from alphaware.base import (ensure_factor_container,
-                            FactorTransformer)
+                            FactorEstimator)
 from alphaware.enums import (FactorType,
                              SelectionMethod)
 from alphaware.const import (INDEX_SELECTOR,
@@ -94,21 +94,22 @@ class BrutalSelector(BaseEstimator, TransformerMixin):
         return ret.reset_index() if self.reset_index else ret
 
 
-class Selector(FactorTransformer):
+class Selector(FactorEstimator):
     def __init__(self,
                  industry_weight=None,
                  method=SelectionMethod.INDUSTRY_NEUTRAL,
                  nb_select=10,
                  prop_select=0.1,
                  copy=True,
-                 out_container=False,
                  **kwargs):
-        super(Selector, self).__init__(copy=copy, out_container=out_container)
+        super(Selector, self).__init__()
         self.method = method
         self.nb_select = nb_select
         self.prop_select = prop_select
         self.industry_weight = industry_weight
         self.min_select_per_industry = kwargs.get('min_select_per_industry', 2)
+        self.copy = copy
+        self.df_mapper = None
 
     def _build_mapper(self, factor_container):
         data_mapper_by_date = pd.Series()
@@ -131,8 +132,12 @@ class Selector(FactorTransformer):
 
         return data_mapper_by_date
 
+    def fit(self, factor_container, **kwargs):
+        self.df_mapper = self._build_mapper(factor_container)
+        return self
+
     @preprocess(factor_container=ensure_factor_container)
-    def transform(self, factor_container, **kwargs):
+    def predict(self, factor_container):
         if self.copy:
             factor_container = copy.deepcopy(factor_container)
         tiaocang_date = factor_container.tiaocang_date
@@ -151,8 +156,4 @@ class Selector(FactorTransformer):
                            INDEX_SELECTOR.col_name]
         data_df.set_index([data_df.columns[0], data_df.columns[1]], inplace=True)
 
-        factor_container.data = data_df
-        if self.out_container:
-            return factor_container
-        else:
-            return factor_container.data
+        return data_df
