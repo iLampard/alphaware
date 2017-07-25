@@ -14,6 +14,7 @@ from alphaware.preprocess import (FactorNeutralizer,
                                   FactorWinsorizer,
                                   FactorImputer)
 from alphaware.selector import Selector
+from alphaware.pipeline import AlphaPipeline
 
 # 加载MV和PB数据
 data_pb = load_factor_data_from_csv('pb_test.csv')
@@ -44,28 +45,31 @@ fc = FactorContainer(start_date='2014-01-01',
                      end_date='2014-03-01',
                      factors=[factor_mv, factor_pb, factor_return, factor_industry_code])
 
+# pipeline
 # 第一步，处理极个别N/A, 有中位数替换
-fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
-                   categorical_strategy=NAStrategy.CUSTOM,
-                   custom_value='other',
-                   out_container=True).fit_transform(fc)
-
+step_1 = ('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
+                                   categorical_strategy=NAStrategy.CUSTOM,
+                                   custom_value='other'))
 # 第二部，去极值化
-fc = FactorWinsorizer(quantile_range=(5, 95),
-                      out_container=True).fit_transform(fc)
+step_2 = ('winsorize', FactorWinsorizer(quantile_range=(0.05, 0.95)))
 
 # 第三步，标准化
-fc = FactorStandardizer(out_container=True).fit_transform(fc)
+step_3 = ('std', FactorStandardizer())
 
 # 第四步，中性化
-fc = FactorNeutralizer(out_container=True).fit_transform(fc)
+step_4 = ('neutralize', FactorNeutralizer())
+
 
 # 第五步，按照因子排序打分，使用最简单的方法 - 等权求和
 # 市值越小分数越高，PB越小分数越高
-fc = FactorSimpleRank(out_container=True, ascend_order=[-1, -1]).fit_transform(fc)
+step_5 = ('rank', FactorSimpleRank(ascend_order=[-1, -1], out_container=True))
 
 # 第六步，行业中性选股，选取每个行业的前10%
 # 要读取一个行业权重比例的数据
 industry_weight = load_factor_data_from_csv('industry_weight.csv')
-selected_sec = Selector(industry_weight=industry_weight, method=SelectionMethod.INDUSTRY_NEUTRAL).fit(fc).predict(fc)
-print selected_sec
+step_6 = ('select', Selector(industry_weight=industry_weight, method=SelectionMethod.INDUSTRY_NEUTRAL))
+
+pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5, step_6])
+ptf = pipeline.fit_predict(fc)
+
+print ptf

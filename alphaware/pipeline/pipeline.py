@@ -30,7 +30,11 @@ class AlphaPipeline(Pipeline):
                 fc_fit = _call_fit(transform.fit,
                                    fc, y, **fit_params_steps[name]).transform(fc)
             if not isinstance(fc_fit, FactorContainer):
-                fc.replace_data(fc_fit)
+                try:
+                    fc.replace_data(fc_fit)
+                except ValueError:
+                    raise ValueError(
+                        'Failed in chain step {0}, please set out_container=True explicitly'.format(transform))
             else:
                 fc = fc_fit
 

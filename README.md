@@ -220,7 +220,7 @@ def group_perf_stat(strat_return, freq=FreqType.EOY, **kwargs):
 
 
 
-#### 示例： 流程化计算因子IC 
+#### 示例一： 流程化计算因子IC 
 
 下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
@@ -366,6 +366,58 @@ ic = pipeline.fit_predict(fc)
 ```
 代码可参见[ic_pipeline](/examples/ic_pipeline.py)
 
+
+#### 示例二： 流程化因子选股
+
+加载市值和PB因子和示例一中的步骤完全一致，此时直接使用pipeline
+- 此处使用最简单的选股策略，仅作为示例用
+- 用户可自行定义RankTransformer实现复杂的选股模型，只要从基类FactorTransfomer继承即可
+
+```python
+# 第一步，处理极个别N/A, 有中位数替换
+step_1 = ('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
+                                   categorical_strategy=NAStrategy.CUSTOM,
+                                   custom_value='other'))
+# 第二部，去极值化
+step_2 = ('winsorize', FactorWinsorizer(quantile_range=(0.05, 0.95)))
+
+# 第三步，标准化
+step_3 = ('std', FactorStandardizer())
+
+# 第四步，中性化
+step_4 = ('neutralize', FactorNeutralizer())
+
+
+# 第五步，按照因子排序打分，使用最简单的方法 - 等权求和
+# 市值越小分数越高，PB越小分数越高
+step_5 = ('rank', FactorSimpleRank(ascend_order=[-1, -1], out_container=True))
+
+# 第六步，行业中性选股，选取每个行业的前10%
+# 要读取一个行业权重比例的数据
+industry_weight = load_factor_data_from_csv('industry_weight.csv')
+step_6 = ('select', Selector(industry_weight=industry_weight, method=SelectionMethod.INDUSTRY_NEUTRAL))
+
+pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5, step_6])
+ptf = pipeline.fit_predict(fc)
+
+# result
+                       score industry_code    weight
+date       secID                                    
+2014-01-30 002696.SZ  2433.5     801010.SI  0.331429
+           000798.SZ  2416.5     801010.SI  0.331429
+           000911.SZ    2337     801010.SI  0.331429
+           002567.SZ  2079.5     801010.SI  0.331429
+           300119.SZ    2048     801010.SI  0.331429
+           300106.SZ  2045.5     801010.SI  0.331429
+           002688.SZ  2037.5     801010.SI  0.331429
+           601808.SH  2118.5     801020.SI     0.288
+           300084.SZ    2038     801020.SI     0.288
+           601918.SH    2036     801020.SI     0.288
+           601898.SH  1940.5     801020.SI     0.288
+           000933.SZ    1905     801020.SI     0.288
+           300121.SZ    2480     801030.SI  0.333913
+```
+代码可参见[selector_pipeline](/examples/selector_pipeline.py)
 
 ## Requirement
 ``` python
