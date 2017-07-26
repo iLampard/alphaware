@@ -67,3 +67,4 @@ fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 # 第五步，求因子IC
 ic = FactorIC().predict(fc)
 
+print (ic)
