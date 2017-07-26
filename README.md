@@ -17,7 +17,7 @@ tools for alpha research
 * [项目概况](https://github.com/ilampard/alphaware/blob/master/README.md#项目概况)
 * [如何安装](https://github.com/ilampard/alphaware/blob/master/README.md#如何安装)
 * [开始使用](https://github.com/ilampard/alphaware/blob/master/README.md#开始使用)
-    * [核心类以及函数介绍](https://github.com/ilampard/alphaware/blob/master/README.md####核心类以及函数介绍)
+    * 核心类以及函数介绍
         * *Factor*：保存单个因子信息的类
         * *FactorContainer*： 保存所有因子信息的类 
         * *FactorTransformer*： 类似于scikit-learn的transformer
@@ -25,8 +25,8 @@ tools for alpha research
         * *AlphaPipeline*： 类似于scikit-learn的pipeline
         * *date utilities*: 提供调仓日计算等功能
         * *metrics utilities*： 提供超额收益计算等功能
-    * [示例一： 流程化计算因子IC](https://github.com/ilampard/alphaware/blob/master/README.md####示例一)
-    * [示例二： 流程化因子选股](https://github.com/ilampard/alphaware/blob/master/README.md####示例二)
+    * 示例一： 流程化计算因子IC
+    * 示例二： 流程化因子选股
 * [依赖库](https://github.com/ilampard/alphaware/blob/master/README.md#依赖库)
 * [更多示例](https://github.com/ilampard/alphaware/blob/master/README.md#更多示例)
 * [关于项目](https://github.com/ilampard/alphaware/blob/master/README.md#关于项目)
@@ -53,7 +53,7 @@ pip install alphaware
 
 # 开始使用
 
-#### 核心类以及函数介绍
+### 核心类以及函数介绍
 
 ##### Factor
 
@@ -245,7 +245,7 @@ def group_perf_stat(strat_return, freq=FreqType.EOY, **kwargs):
 
 
 
-#### 示例一
+### 示例一： 流程化计算因子IC
 
 下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
@@ -392,7 +392,7 @@ ic = pipeline.fit_predict(fc)
 代码可参见[ic_pipeline](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/ic_pipeline.py)
 
 
-#### 示例二
+### 示例二: 流程化因子选股
 
 本例说明如何使用*alphaware*进行因子选股
 
