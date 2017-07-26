@@ -2,6 +2,12 @@
 tools for alpha research
 
 <table>
+
+<tr>
+  <td>Latest Release</td>
+  <td><img src="https://img.shields.io/pypi/v/alphaware.svg" alt="latest release" /></td>
+</tr>
+
 <tr>
   <td>Python version</td>
   <td><img src="https://img.shields.io/badge/python-2.7-blue.svg"/>   <img src="https://img.shields.io/badge/python-3.5-blue.svg"/></td>

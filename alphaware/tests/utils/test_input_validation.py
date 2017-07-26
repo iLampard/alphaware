@@ -19,7 +19,7 @@ from alphaware.const import (INDEX_FACTOR,
 
 class TestInputValidation(TestCase):
     @parameterized.expand([([1, 2, 3], pd.Series([1, 2, 3])),
-                           (np.array([1, 2, 3]), pd.Series([1, 2, 3]).astype('int32')),
+                           (np.array([1.0, 2.0, 3.0]), pd.Series([1.0, 2.0, 3.0])),
                            (pd.Series([1, 2, 3]), pd.Series([1, 2, 3]))
                            ])
     def test_ensure_pd_series(self, data, expected):
