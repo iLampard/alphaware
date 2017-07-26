@@ -13,7 +13,25 @@ tools for alpha research
 </tr>
 </table>
 
-## Summary
+
+* [项目概况](https://github.com/ilampard/alphaware/blob/master/README.md#项目概况)
+* [如何安装](https://github.com/ilampard/alphaware/blob/master/README.md#如何安装)
+* [开始使用](https://github.com/ilampard/alphaware/blob/master/README.md#开始使用)
+    * [核心类以及函数介绍](https://github.com/ilampard/alphaware/blob/master/README.md####核心类以及函数介绍)
+        * *Factor*：保存单个因子信息的类
+        * *FactorContainer*： 保存所有因子信息的类 
+        * *FactorTransformer*： 类似于scikit-learn的transformer
+        * *FactorEstimator*： 类似于scikit-learn的estimator
+        * *AlphaPipeline*： 类似于scikit-learn的pipeline
+        * *date utilities*: 提供调仓日计算等功能
+        * *metrics utilities*： 提供超额收益计算等功能
+    * [示例一： 流程化计算因子IC](https://github.com/ilampard/alphaware/blob/master/README.md####示例一)
+    * [示例二： 流程化因子选股](https://github.com/ilampard/alphaware/blob/master/README.md####示例二)
+* [依赖库](https://github.com/ilampard/alphaware/blob/master/README.md#依赖库)
+* [更多示例](https://github.com/ilampard/alphaware/blob/master/README.md#更多示例)
+* [关于项目](https://github.com/ilampard/alphaware/blob/master/README.md#关于项目)
+
+# 项目概况
 
 *alphaware*提供了多因子研究的算法接口以及工具合集
 
@@ -26,9 +44,16 @@ tools for alpha research
 - 调仓日的计算（给定周期，起始日期，根据交易日日历来计算）
 - 收益率的转换（累计与非累计），评价（各种比率）以及对冲收益率的计算、绘图等
 
-## Quick Start
 
-#### 主要函数以及类介绍
+# 如何安装
+
+``` python
+pip install alphaware
+```
+
+# 开始使用
+
+#### 核心类以及函数介绍
 
 ##### Factor
 
@@ -119,7 +144,7 @@ fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
 # 求因子IC系数
 ic = FactorIC().predict(fc)
 ``` 
-代码可参见[FactorIC_example](/examples/ic_examples.py)
+代码可参见[FactorIC_example](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/ic_examples.py)
 
 已经实现的*FactorEstimator*有
 ``` python
@@ -216,11 +241,11 @@ def group_perf_stat(strat_return, freq=FreqType.EOY, **kwargs):
     """
 ```                                     
                                        
-*Utilities*函数具体实现请见[utilities_example](/examples/utils_funcs.py) 和[metrics单元测试](/tests/metrics/test_return_metrics.py)
+*Utilities*函数具体实现请见[utilities_example](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/utils_func.py) 和[metrics单元测试](https://github.com/iLampard/alphaware/blob/master/alphaware/tests/metrics/test_return_metrics.py)
 
 
 
-#### 示例一： 流程化计算因子IC 
+#### 示例一
 
 下面以流程化的计算因子IC的例子来说明*alphaware*的用法。
 
@@ -335,7 +360,7 @@ fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 ic = FactorIC().predict(fc)
 ```
 
-代码可参见[ic_windadapter](/examples/ic_windadapter.py)
+代码可参见[ic_windadapter](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/ic_windadapter.py)
 
 > 所有上面的步骤可以用AlphaPipeline流程化解决
 ```python
@@ -364,10 +389,12 @@ ic = pipeline.fit_predict(fc)
 2014-01-30        -0.235823        -0.108877
 2014-02-28        -0.092717        -0.204371
 ```
-代码可参见[ic_pipeline](/examples/ic_pipeline.py)
+代码可参见[ic_pipeline](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/ic_pipeline.py)
 
 
-#### 示例二： 流程化因子选股
+#### 示例二
+
+本例说明如何使用*alphaware*进行因子选股
 
 加载市值和PB因子和示例一中的步骤完全一致，此时直接使用pipeline
 - 此处使用最简单的选股策略，仅作为示例用
@@ -417,9 +444,9 @@ date       secID
            000933.SZ    1905     801020.SI     0.288
            300121.SZ    2480     801030.SI  0.333913
 ```
-代码可参见[selector_pipeline](/examples/selector_pipeline.py)
+代码可参见[selector_pipeline](https://github.com/iLampard/alphaware/blob/master/alphaware/examples/selector_pipeline.py)
 
-## Requirement
+# 依赖库
 ``` python
 numpy
 pandas
@@ -428,9 +455,10 @@ argcheck
 empyrical
 ```
 
+# 更多示例
 
-## Install
+* 请参考[examples folder](https://github.com/iLampard/alphaware/tree/master/alphaware/examples)
 
-``` python
-pip install alphaware
-```
+# 关于项目
+
+* 欢迎大家使用及提出意见
