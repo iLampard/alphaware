@@ -32,6 +32,7 @@ install:
   - pip install empyrical
   - pip install argcheck
   - pip install mock
+  - pip install parameterized
   - pip install --use-wheel finance-python
   - pip install coveralls
 # command to run tests
