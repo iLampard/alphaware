@@ -15,9 +15,9 @@ class FactorQuantile(FactorEstimator):
             factor = pd.DataFrame(pd.concat([score[date_], fwd_return[date_]], axis=1))
             factor.sort_values(by=score.name, inplace=True)
             result_quantiles = {}
-            for i in range(0, self.quantiles):
+            for i in range(self.quantiles):
                 result_quantiles[score.name + '_' + fwd_return.name + '_' + str(i + 1)] \
-                    = factor[fwd_return.name][i * len(factor) / self.quantiles:(i + 1) * len(factor) / self.quantiles].mean()
+                    = factor[fwd_return.name][int(i * len(factor) / self.quantiles):int((i + 1) * len(factor) / self.quantiles)].mean()
             result = pd.concat([result, pd.DataFrame(result_quantiles, index=[date_])], axis=0)
         return result
 

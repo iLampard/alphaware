@@ -108,4 +108,4 @@ class TestFactorContainer(TestCase):
                            pd.DataFrame({'test1': [1.0, 2.0, 3.0, 4.0], 'test3': [1.0, 2.0, 3.0, 5.0]},
                                         index=index_exp))
 
-        self.assertEqual(fc.alpha_factor_col, ['test1', 'test3'])
+        self.assertEqual(list(fc.alpha_factor_col), ['test1', 'test3'])

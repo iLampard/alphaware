@@ -5,7 +5,8 @@ import pandas as pd
 from collections import defaultdict
 from toolz.dicttoolz import (merge,
                              dissoc)
-from PyFin.Utilities import pyFinAssert
+from PyFin.Utilities import (pyFinWarning,
+                             pyFinAssert)
 from argcheck import (expect_types,
                       optional,
                       preprocess)
@@ -196,17 +197,20 @@ class FactorContainer(object):
 
     @property
     def industry_code(self):
-        key = filter(lambda x: self.property[x]['type'] == FactorType.INDUSTY_CODE, self.names)
+        key = list(filter(lambda x: self.property[x]['type'] == FactorType.INDUSTY_CODE, self.names))
+        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one industry code')
         return self.data[key[0]]
 
     @property
     def score(self):
-        key = filter(lambda x: self.property[x]['type'] == FactorType.SCORE, self.names)
+        key = list(filter(lambda x: self.property[x]['type'] == FactorType.SCORE, self.names))
+        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one score')
         return self.data[key[0]]
 
     @property
     def mkt_cap(self):
-        key = filter(lambda x: self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV, self.names)
+        key = list(filter(lambda x: self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV, self.names))
+        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one mkt cap')
         return self.data[key[0]]
 
     @property
@@ -215,11 +219,11 @@ class FactorContainer(object):
             return self.property[x]['type'] == FactorType.ALPHA_FACTOR or \
                    self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV
 
-        return filter(_is_alpha_factor, self.names)
+        return list(filter(_is_alpha_factor, self.names))
 
     @property
     def fwd_return_col(self):
-        key = filter(lambda x: self.property[x]['type'] == FactorType.FWD_RETURN, self.names)
+        key = list(filter(lambda x: self.property[x]['type'] == FactorType.FWD_RETURN, self.names))
         return key
 
     @preprocess(data_=ensure_np_array)
