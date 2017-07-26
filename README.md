@@ -122,7 +122,7 @@ fc.remove_factor(factor_roe)
 
 ``` python
 # 对FactorContainer携带的因子进行去极值化
-quantile_range = (0.01, 0.99)
+quantile_range = (1.0, 99.0)
 fc = FactorWinsorizer(quantile_range, out_container=True).fit_transform(fc)
 fc_data = FactorWinsorizer(quantile_range, out_container=False).fit_transform(fc)
 ```        
@@ -412,7 +412,7 @@ step_1 = ('imputer', FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                                    categorical_strategy=NAStrategy.CUSTOM,
                                    custom_value='other'))
 # 第二部，去极值化
-step_2 = ('winsorize', FactorWinsorizer(quantile_range=(0.05, 0.95)))
+step_2 = ('winsorize', FactorWinsorizer(quantile_range=(5, 95)))
 
 # 第三步，标准化
 step_3 = ('std', FactorStandardizer())
