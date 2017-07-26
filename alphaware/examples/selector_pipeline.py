@@ -72,4 +72,4 @@ step_6 = ('select', Selector(industry_weight=industry_weight, method=SelectionMe
 pipeline = AlphaPipeline([step_1, step_2, step_3, step_4, step_5, step_6])
 ptf = pipeline.fit_predict(fc)
 
-print ptf
+print (ptf)

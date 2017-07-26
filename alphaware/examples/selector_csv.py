@@ -68,4 +68,4 @@ fc = FactorSimpleRank(out_container=True, ascend_order=[-1, -1]).fit_transform(f
 # 要读取一个行业权重比例的数据
 industry_weight = load_factor_data_from_csv('industry_weight.csv')
 selected_sec = Selector(industry_weight=industry_weight, method=SelectionMethod.INDUSTRY_NEUTRAL).fit(fc).predict(fc)
-print selected_sec
+print (selected_sec)

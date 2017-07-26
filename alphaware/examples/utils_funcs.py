@@ -34,8 +34,5 @@ ret = RETURN(data=pd.Series([1.0, 1.0, 1.05, 1.1],
 def mean_return(data):
     return data.mean()
 
-print mean_return(ret)
 
-
-
-
+print (mean_return(ret))

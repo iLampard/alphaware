@@ -2,14 +2,13 @@
 
 import io
 import sys
-
 import numpy as np
 from setuptools import find_packages
 from setuptools import setup
 
 PACKAGE = 'alphaware'
 NAME = 'alphaware'
-VERSION = '0.2.0'
+VERSION = '0.2.2'
 DESCRIPTION = 'alpha research tools'
 AUTHOR = 'iLampard, RoxanneYang, MarkSh714'
 URL = 'https://github.com/iLampard/alphaware'
@@ -25,7 +24,7 @@ setup(name=NAME,
       description=DESCRIPTION,
       author=AUTHOR,
       url=URL,
-      include_package_data=True,
+      include_package_data=False,
       packages=find_packages(),
       install_requires=io.open(requirements, encoding='utf8').read(),
       include_dirs=[np.get_include()],

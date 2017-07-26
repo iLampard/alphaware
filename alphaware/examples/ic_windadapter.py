@@ -48,15 +48,11 @@ fc = FactorContainer(start_date='2014-01-01',
                      end_date='2014-03-01',
                      factors=[factor_mv, factor_pb, factor_return, factor_industry_code])
 
-
-print fc.alpha_factor_col
-
 # 第一步，处理极个别N/A, 有中位数替换
 fc = FactorImputer(numerical_strategy=NAStrategy.MEDIAN,
                    categorical_strategy=NAStrategy.CUSTOM,
                    custom_value='other',
                    out_container=True).fit_transform(fc)
-
 
 # 第二部，去极值化
 fc = FactorWinsorizer(quantile_range=(5, 95),
@@ -70,4 +66,4 @@ fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 
 # 第五步，求因子IC
 ic = FactorIC().predict(fc)
-print ic
+
