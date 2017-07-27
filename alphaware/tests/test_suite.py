@@ -22,7 +22,8 @@ from alphaware.tests.utils import (TestDateUtils,
 from alphaware.tests.test_selector import TestSelector
 from alphaware.tests.analyzer import (TestFactorIC,
                                       TestFactorQuantile,
-                                      TestFactorSimpleRank)
+                                      TestFactorSimpleRank,
+                                      TestTopMinusBottom)
 
 
 def test():
@@ -61,6 +62,8 @@ def test():
     tests = unittest.TestLoader().loadTestsFromTestCase(TestFactorQuantile)
     suite.addTest(tests)
     tests = unittest.TestLoader().loadTestsFromTestCase(TestFactorSimpleRank)
+    suite.addTest(tests)
+    tests = unittest.TestLoader().loadTestsFromTestCase(TestTopMinusBottom)
     suite.addTest(tests)
 
     res = unittest.TextTestRunner(verbosity=3).run(suite)

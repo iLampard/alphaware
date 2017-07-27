@@ -9,7 +9,7 @@ from alphaware.enums import (FactorType,
                              FactorNormType,
                              NAStrategy)
 from alphaware.utils import (fwd_return)
-from alphaware.analyzer import FactorIC
+from alphaware.analyzer import TopMinusBottom
 from alphaware.preprocess import (FactorNeutralizer,
                                   FactorStandardizer,
                                   FactorWinsorizer,
@@ -60,7 +60,7 @@ fc = FactorStandardizer(out_container=True).fit_transform(fc)
 # 第四步，中性化
 fc = FactorNeutralizer(out_container=True).fit_transform(fc)
 
-# 第五步，求因子IC
-ic = FactorIC().predict(fc)
+# 第五步，求因子得分最高最低两组收益差
+top_minus_bottom = TopMinusBottom().predict(fc)
 
-print (ic)
+print (top_minus_bottom)
