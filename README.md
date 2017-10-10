@@ -64,7 +64,7 @@ pip install alphaware
 ##### Factor
 
 *Factor*类用以保存因子的三个相关信息： 数据(data)， 名称(name)和属性字典(property_dict)
-- 数据是默认Multi-Index DataFrame格式， index是两列(date和secID)，因子值作为列
+- 数据是默认Multi-Index DataFrame格式， index是两列(date和ticker)，因子值作为列
 - 名称是赋予因子的名字，会作为作为数据的列名
 - 属性字典保存了因子的属性
     * 本文提到因子实际上是广义的因子，所以需要进一步分别因子的类型，如alpha因子、行业代码、价格、当期收益、下期收益、因子得分等；还有比如进行中性化的方法，是使用行业中性还是行业市值中性。
@@ -435,7 +435,7 @@ ptf = pipeline.fit_predict(fc)
 
 # result
                        score industry_code    weight
-date       secID                                    
+date       ticker                                    
 2014-01-30 002696.SZ  2433.5     801010.SI  0.331429
            000798.SZ  2416.5     801010.SI  0.331429
            000911.SZ    2337     801010.SI  0.331429

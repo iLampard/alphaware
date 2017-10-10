@@ -8,7 +8,7 @@ from setuptools import setup
 
 PACKAGE = 'alphaware'
 NAME = 'alphaware'
-VERSION = '0.2.3'
+VERSION = '0.2.4'
 DESCRIPTION = 'alpha research tools'
 AUTHOR = 'iLampard, RoxanneYang, MarkSh714'
 URL = 'https://github.com/iLampard/alphaware'

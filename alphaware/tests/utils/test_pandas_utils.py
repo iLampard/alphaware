@@ -25,7 +25,7 @@ class TestPandasUtils(TestCase):
                             INDEX_FACTOR,
                             pd.DataFrame(index=MultiIndex(levels=[['2014', '2015', '2016'], ['001', '002']],
                                                           labels=[[0, 0, 1, 1, 2, 2], [0, 1, 0, 1, 0, 1]],
-                                                          names=['date', 'secID']),
+                                                          names=['trade_date', 'ticker']),
                                          data=[1, 2, 2, 3, 3, 4],
                                          columns=['test_factor']))])
     def test_convert_df_format_1(self, data, target_format, col_name, multi_index, expected):
@@ -34,14 +34,14 @@ class TestPandasUtils(TestCase):
 
     @parameterized.expand(
         [(pd.DataFrame(
-            index=MultiIndex.from_product([['2014', '2015', '2016'], ['001', '002']], names=['date', 'secID']),
+            index=MultiIndex.from_product([['2014', '2015', '2016'], ['001', '002']], names=['trade_date', 'ticker']),
             data=[1, 2, 3, 4, 5, 6],
             columns=['factor']),
           OutputDataFormat.PITVOT_TABLE_DF,
           'factor',
           INDEX_FACTOR,
           pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
-                       index=Index(['2014', '2015', '2016'], name='date')))])
+                       index=Index(['2014', '2015', '2016'], name='trade_date')))])
     def test_convert_df_format_2(self, data, target_format, col_name, multi_index, expected):
         calculated = convert_df_format(data, target_format, col_name, multi_index)
         assert_frame_equal(calculated, expected)
@@ -95,21 +95,21 @@ class TestPandasUtils(TestCase):
 
     @parameterized.expand([(pd.Series(data=[1, 2, 3, 4],
                                       index=pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['a', 'b']],
-                                                                       names=['date', 'secID'])),
+                                                                       names=['trade_date', 'ticker'])),
                             1,
                             pd.DataFrame(data=[3, 4],
                                          index=pd.MultiIndex.from_product([[dt(2014, 1, 30)], ['a', 'b']],
-                                                                          names=['date', 'secID']),
+                                                                          names=['trade_date', 'ticker']),
                                          columns=['fwd_return'])
                             ),
                            (pd.DataFrame(data=[1, 2, 3, 4, 5, 6],
                                          index=pd.MultiIndex.from_product(
                                              [[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 30)], ['a', 'b']],
-                                             names=['date', 'secID'])),
+                                             names=['trade_date', 'ticker'])),
                             2,
                             pd.DataFrame(data=[5, 6],
                                          index=pd.MultiIndex.from_product([[dt(2014, 1, 30)], ['a', 'b']],
-                                                                          names=['date', 'secID']),
+                                                                          names=['trade_date', 'ticker']),
                                          columns=['fwd_return'])
                             )
                            ])

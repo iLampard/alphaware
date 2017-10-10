@@ -42,17 +42,17 @@ class TestInputValidation(TestCase):
 
     @parameterized.expand([(pd.DataFrame([1, 2],
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
-                                                                          names=['date', 'sec'])),
+                                                                          names=['trade_date', 'sec'])),
                             OutputDataFormat.MULTI_INDEX_DF,
                             INDEX_INDUSTRY_WEIGHT,
                             pd.DataFrame([1, 2],
                                          index=pd.MultiIndex.from_product([['2010-01-01', '2010-01-02'], ['001']],
-                                                                          names=['date', 'industry_code'])
+                                                                          names=['trade_date', 'industry_code'])
                                          )),
-                           (pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date')),
+                           (pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='trade_date')),
                             OutputDataFormat.PITVOT_TABLE_DF,
                             INDEX_FACTOR,
-                            pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='date'))
+                            pd.DataFrame([1, 2], index=pd.Index(['2010-01-01', '2010-01-02'], name='trade_date'))
                             )])
     def test_ensure_pd_index_names(self, data, data_format, valid_index, expected):
         calculated = ensure_pd_index_names(data, data_format, valid_index)

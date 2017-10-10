@@ -95,7 +95,7 @@ class PredMean(FactorEstimator):
 class TestPipeline(TestCase):
     def setUp(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28'], ['001', '002', '003', '004']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         data1 = pd.DataFrame(index=index, data=[1.0, 1.0, 1.2, 2.0, 0.9, 5.0, 5.0, 5.1])
         factor_test1 = Factor(data=data1, name='test1',
                               property_dict={'norm_type': FactorNormType.Industry_Cap_Neutral})
@@ -126,7 +126,7 @@ class TestPipeline(TestCase):
                                   ('div', TransDiv4())])
         calculated = pipeline.fit_transform(self.factor_container)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
                                  'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
                                  'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
@@ -141,7 +141,7 @@ class TestPipeline(TestCase):
         pipeline.set_params(multi__out_container=True)
         calculated = pipeline.fit_transform(self.factor_container)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
                                  'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
                                  'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],
@@ -163,7 +163,7 @@ class TestPipeline(TestCase):
         pipeline.set_params(transmulti2__out_container=True)
         calculated = pipeline.fit_transform(self.factor_container)
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002', '003', '004']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         expected = pd.DataFrame({'test1': [0.5, 0.5, 0.6, 1, 0.45, 2.5, 2.5, 2.55],
                                  'test2': [2.6, 2.5, 2.8, 2.9, 2.7, 1.9, 5.0, 2.1],
                                  'test3': ['a', 'b', 'a', 'a', 'a', 'b', 'c', 'b'],

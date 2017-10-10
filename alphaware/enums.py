@@ -36,6 +36,7 @@ class FactorType(StrEnum):
     ALPHA_FACTOR_MV = 'alpha_factor_mv'
     SCORE = 'score'
     FWD_RETURN = 'fwd_return'
+    WEIGHT = 'weight'
 
 
 @unique

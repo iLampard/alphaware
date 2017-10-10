@@ -5,7 +5,8 @@ from unittest import TestCase
 import pandas as pd
 from pandas.util.testing import (assert_series_equal,
                                  assert_frame_equal)
-from alphaware.metrics import (calc_alpha_return,
+from alphaware.metrics import (calc_ptf_return,
+                               calc_alpha_return,
                                group_perf_stat)
 from alphaware.const import (INDEX_RETURN,
                              RETURN)
@@ -17,18 +18,28 @@ class TestReturnMetrics(TestCase):
     def setUp(self):
         dir_name = os.path.dirname(os.path.abspath(__file__))
         return_data = pd.read_csv(dir_name + '//data//performance.csv')
-        return_data.columns = ['date', 'benchmark', 'strategy']
-        return_data['date'] = pd.to_datetime(return_data['date'], format='%Y/%m/%d')
-        return_data.set_index('date', inplace=True)
+        return_data.columns = ['trade_date', 'benchmark', 'strategy']
+        return_data['trade_date'] = pd.to_datetime(return_data['trade_date'], format='%Y/%m/%d')
+        return_data.set_index('trade_date', inplace=True)
 
         self.strategy = RETURN(data=return_data['strategy'], type=ReturnType.Cumul)
         self.benchmark = RETURN(data=return_data['benchmark'], type=ReturnType.Cumul)
 
         result = pd.read_csv(dir_name + "//data//result.csv")
-        result.columns = ['date', 'result1', 'result2', 'result3']
-        result['date'] = pd.to_datetime(result['date'], format='%Y/%m/%d')
-        result.set_index('date', inplace=True)
+        result.columns = ['trade_date', 'result1', 'result2', 'result3']
+        result['trade_date'] = pd.to_datetime(result['trade_date'], format='%Y/%m/%d')
+        result.set_index('trade_date', inplace=True)
         self.result = result
+
+    def test_calc_ptf_return(self):
+        index = pd.MultiIndex.from_product([['2014-02-27', '2014-02-28'], ['001', '002']],
+                                           names=['trade_date', 'ticker'])
+        ticker_return = pd.Series([0.05, 0.06, 0.08, 0.08], index=index, name='return')
+
+        calculated = calc_ptf_return(ticker_return=ticker_return)
+        expected = pd.DataFrame({'return': [0.055, 0.135]},
+                                index=pd.Index(['2014-02-27', '2014-02-28'], name='trade_date'))
+        assert_frame_equal(calculated, expected)
 
     def test_calc_alpha_return(self):
         calculated = calc_alpha_return(unhedged_return=self.strategy,

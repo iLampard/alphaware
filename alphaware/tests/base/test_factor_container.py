@@ -16,7 +16,7 @@ from alphaware.enums import (FactorType,
 class TestFactorContainer(TestCase):
     def test_factor_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         data = pd.DataFrame(index=index, data=[1, 2, 3, 4, 5, 6])
         factor = Factor(data=data, name='test', production_data_format=OutputDataFormat.PITVOT_TABLE_DF)
 
@@ -27,13 +27,13 @@ class TestFactorContainer(TestCase):
 
         factor_data_expected = pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
                                             index=pd.Index([dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)],
-                                                           name='date'))
+                                                           name='trade_date'))
         assert_frame_equal(factor.data, factor_data_expected)
 
     def test_factor_2(self):
         data = pd.DataFrame({'001': [1, 3, 5], '002': [2, 4, 6]},
                             index=pd.Index([dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)],
-                                           name='date'))
+                                           name='trade_date'))
         property_dict = {'data_format': OutputDataFormat.PITVOT_TABLE_DF}
         factor = Factor(data=data,
                         name='test',
@@ -46,7 +46,7 @@ class TestFactorContainer(TestCase):
         self.assertEqual(factor.freq, FreqType.EOM)
 
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)], ['001', '002']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         factor_data_expected = pd.DataFrame(index=index, data=[1, 2, 3, 4, 5, 6], columns=['test'])
         assert_frame_equal(factor.data, factor_data_expected)
 
@@ -55,18 +55,18 @@ class TestFactorContainer(TestCase):
         test index name validation 
         """
         index = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)], ['001', '002']],
-                                           names=['date', 'sec'])
+                                           names=['trade_date', 'sec'])
         data = pd.DataFrame(index=index, data=[1, 2, 3, 4, 5, 6])
         factor = Factor(data=data, name='test2')
         index_exp = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28), dt(2014, 3, 31)], ['001', '002']],
-                                               names=['date', 'secID'])
+                                               names=['trade_date', 'ticker'])
 
         expected = pd.DataFrame(index=index_exp, data=[1, 2, 3, 4, 5, 6], columns=['test2'])
         assert_frame_equal(factor.data, expected)
 
     def test_factor_container_1(self):
         index = pd.MultiIndex.from_product([['2014-01-30', '2014-02-28', '2014-03-31'], ['001', '002']],
-                                           names=['date', 'secID'])
+                                           names=['trade_date', 'ticker'])
         data1 = pd.DataFrame(index=index, data=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
         factor_test1 = Factor(data=data1, name='test1')
 
@@ -79,7 +79,7 @@ class TestFactorContainer(TestCase):
         fc = FactorContainer('2014-01-30', '2014-02-28', [factor_test1, factor_test2])
 
         index_exp = pd.MultiIndex.from_product([[dt(2014, 1, 30), dt(2014, 2, 28)], ['001', '002']],
-                                               names=['date', 'secID'])
+                                               names=['trade_date', 'ticker'])
 
         data_exp = pd.DataFrame({'test1': [1.0, 2.0, 3.0, 4.0], 'test2': [3.0, 2.0, 3.0, 7.0]}, index=index_exp)
         assert_frame_equal(fc.data, data_exp)

@@ -5,18 +5,52 @@ import matplotlib.pyplot as plt
 from argcheck import (expect_types,
                       optional,
                       preprocess)
-from ..enums import (FreqType)
+from ..enums import (FreqType,
+                     FactorType,
+                     OutputDataFormat)
 from ..utils import (ensure_cumul_return,
                      ensure_noncumul_return,
+                     ensure_pd_index_names,
                      group_by_freq,
                      fig_style)
 from ..const import (SIMPLE_STAT_FUNCS,
                      FACTOR_STAT_FUNCS,
                      RETURN,
-                     INDEX_RETURN)
+                     INDEX_RETURN,
+                     INDEX_FACTOR)
+from ..base import (Factor,
+                    FactorContainer)
 
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
+
+
+@expect_types(ticker_return=pd.Series, weight=optional(pd.Series))
+def calc_ptf_return(ticker_return, weight=None, cumul_return=True):
+    """
+    :param ticker_return: pd.DataFrame, multi-index, index=['trade_date', 'ticker']
+    :param weight: optional, None. pd.DataFrame, multi-index, index=['trade_date', 'ticker']
+    :param cumul_return: optional, True: cumul return, False: return non-cumul return
+    :return: return weighted portfolio return
+    """
+
+    ticker_return_ = ensure_pd_index_names(ticker_return,
+                                           data_format=OutputDataFormat.MULTI_INDEX_DF,
+                                           valid_index=INDEX_FACTOR)
+    if weight is not None:
+        weight_ = ensure_pd_index_names(weight,
+                                        data_format=OutputDataFormat.MULTI_INDEX_DF,
+                                        valid_index=INDEX_FACTOR)
+        ticker_return_ = pd.merge(ticker_return_, weight_, on=INDEX_FACTOR.full_index)
+        weighted_return = ticker_return_[ticker_return.name] * ticker_return_[weight.name]
+        ptf_return = weighted_return.groupby(INDEX_FACTOR.date_index).mean()
+    else:
+        ptf_return = ticker_return_.reset_index()
+        ptf_return = ptf_return.groupby(INDEX_FACTOR.date_index).mean()
+    if cumul_return:
+        return ptf_return.cumsum()
+    else:
+        return ptf_return
 
 
 @expect_types(unhedged_return=(RETURN, pd.Series), benchmark_return=(RETURN, pd.Series))
