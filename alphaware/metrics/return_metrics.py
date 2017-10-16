@@ -18,8 +18,7 @@ from ..const import (SIMPLE_STAT_FUNCS,
                      RETURN,
                      INDEX_RETURN,
                      INDEX_FACTOR)
-from ..base import (Factor,
-                    FactorContainer)
+
 
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
