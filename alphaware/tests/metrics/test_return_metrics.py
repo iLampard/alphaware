@@ -37,7 +37,7 @@ class TestReturnMetrics(TestCase):
         ticker_return = pd.Series([0.05, 0.06, 0.08, 0.08], index=index, name='return')
 
         calculated = calc_ptf_return(ticker_return=ticker_return)
-        expected = pd.DataFrame({'return': [0.055, 0.135]},
+        expected = pd.DataFrame({'return': [1.055, 1.1394]},
                                 index=pd.Index(['2014-02-27', '2014-02-28'], name='trade_date'))
         assert_frame_equal(calculated, expected)
 

@@ -47,7 +47,7 @@ def calc_ptf_return(ticker_return, weight=None, cumul_return=True):
         ptf_return = ticker_return_.reset_index()
         ptf_return = ptf_return.groupby(INDEX_FACTOR.date_index).mean()
     if cumul_return:
-        return ptf_return.cumsum()
+        return ptf_return.apply(lambda x: 1 + x).cumprod()
     else:
         return ptf_return
 
