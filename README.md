@@ -175,7 +175,7 @@ ic = pipeline.fit_predict(fc)
 
 ##### Utilities
 
-- 调仓日计算： 默认的日历为天朝上交所交易日日历（引用自[Finance-Python](https://github.com/wegamekinglc/Finance-Python)），可根据起始日期，频率等计算调仓日期
+- 调仓日计算： 默认的日历为天朝上交所交易日日历（引用自[x-utils](https://github.com/iLampard/x-utils)），可根据起始日期，频率等计算调仓日期
     
 ``` python
 from alphaware.utils import get_tiaocang_date
@@ -456,7 +456,7 @@ date       ticker
 ``` python
 numpy
 pandas
-finance-python
+x-utils
 argcheck
 empyrical
 ```

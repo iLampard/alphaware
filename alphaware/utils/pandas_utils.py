@@ -5,7 +5,7 @@ import numpy as np
 from argcheck import (expect_types,
                       optional,
                       preprocess)
-from PyFin.Utilities import pyFinAssert
+from xutils import py_assert
 from alphaware.const import INDEX_FACTOR
 from alphaware.enums import (FreqType,
                              OutputDataFormat)
@@ -34,7 +34,7 @@ def top(df, column=None, n=5):
     if isinstance(df, pd.Series):
         ret = df.sort_values(ascending=False)[:n]
     else:
-        pyFinAssert(column is not None, "Specify the col name or use pandas Series type of data")
+        py_assert(column is not None, "Specify the col name or use pandas Series type of data")
         ret = df.sort_values(by=column, ascending=False)[:n]
 
     return ret

@@ -5,7 +5,7 @@ from parameterized import parameterized
 import pandas as pd
 import numpy as np
 from numpy.testing.utils import assert_array_equal
-from PyFin.DateUtilities import Date
+from xutils.date_utils import Date
 from pandas.util.testing import (assert_series_equal,
                                  assert_frame_equal)
 from alphaware.utils import (ensure_pd_series,

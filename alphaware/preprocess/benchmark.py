@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from toolz.dicttoolz import merge
-from PyFin.Utilities import pyFinAssert
+from xutils import py_assert
 import numpy as np
 from alphaware.enums import (FreqType,
                      OutputDataFormat)
@@ -57,7 +57,7 @@ class Benchmark(object):
         self._ensure_date_format(self.industry_weight, INDEX_INDUSTRY_WEIGHT)
 
     def get_industry_weight_on_date(self, date):
-        pyFinAssert(self.industry_weight is not None, ValueError, 'industry weight data is empty')
+        py_assert(self.industry_weight is not None, ValueError, 'industry weight data is empty')
         date = ensure_datetime(date)
         data = self.industry_weight.loc[date]
         data = data.reset_index().set_index(INDEX_INDUSTRY_WEIGHT.industry_index)

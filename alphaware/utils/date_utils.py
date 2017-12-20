@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from PyFin.DateUtilities import (Calendar,
-                                 Date,
-                                 Period,
-                                 Schedule)
-from PyFin.Enums import (BizDayConventions,
-                         Weekdays)
+from xutils.date_utils import (Calendar,
+                               Date,
+                               Period,
+                               Schedule)
+from xutils.date_utils import (BizDayConventions,
+                               Weekdays)
 from argcheck import (expect_types,
                       preprocess)
 

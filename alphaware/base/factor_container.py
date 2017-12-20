@@ -5,8 +5,8 @@ import pandas as pd
 from collections import defaultdict
 from toolz.dicttoolz import (merge,
                              dissoc)
-from PyFin.Utilities import (pyFinWarning,
-                             pyFinAssert)
+from xutils import (py_warning,
+                    py_assert)
 from argcheck import (expect_types,
                       optional,
                       preprocess)
@@ -131,7 +131,7 @@ class FactorContainer(object):
         """
         如果该因子的freq和container的freq一致，那么该因子的日期列应该包含所有的调仓日期，否则报错
         """
-        pyFinAssert(set(self._tiaocang_date).issubset(set(factor.trade_date_list)),
+        py_assert(set(self._tiaocang_date).issubset(set(factor.trade_date_list)),
                     ValueError,
                     'factor {0} does not contain all tiaocang date in its trade date list'.format(factor.name))
         return
@@ -143,7 +143,7 @@ class FactorContainer(object):
 
         factors_ = factors if isinstance(factors, list) else list(factors)
         for factor in factors_:
-            pyFinAssert(factor.production_format == OutputDataFormat.MULTI_INDEX_DF,
+            py_assert(factor.production_format == OutputDataFormat.MULTI_INDEX_DF,
                         ValueError,
                         'factor {0} does not in multi-index dataframe format therefore can not be merged into container'
                         .format(factor.name))
@@ -159,7 +159,7 @@ class FactorContainer(object):
         return
 
     def _concat_factor_data(self, factor):
-        pyFinAssert(self.freq == factor.freq,
+        py_assert(self.freq == factor.freq,
                     ValueError,
                     'Failed to concatenate: factor {0} has different freq from containter'.format(factor.name))
 
@@ -180,7 +180,7 @@ class FactorContainer(object):
     @expect_types(factor=(Factor, str))
     def remove_factor(self, factor):
         factor_name = factor if isinstance(factor, str) else factor.name
-        pyFinAssert(factor_name in self.names, ValueError,
+        py_assert(factor_name in self.names, ValueError,
                     'unable to remove factor_name {0}, which does not exist in current container'.format(factor_name))
         self.names.remove(factor_name)
         self.data.drop(factor_name, axis=1, inplace=True)
@@ -198,19 +198,19 @@ class FactorContainer(object):
     @property
     def industry_code(self):
         key = list(filter(lambda x: self.property[x]['type'] == FactorType.INDUSTY_CODE, self.names))
-        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one industry code')
+        py_warning(len(key) == 1, Warning, 'factor container should have only one industry code')
         return self.data[key[0]]
 
     @property
     def score(self):
         key = list(filter(lambda x: self.property[x]['type'] == FactorType.SCORE, self.names))
-        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one score')
+        py_warning(len(key) == 1, Warning, 'factor container should have only one score')
         return self.data[key[0]]
 
     @property
     def mkt_cap(self):
         key = list(filter(lambda x: self.property[x]['type'] == FactorType.ALPHA_FACTOR_MV, self.names))
-        pyFinWarning(len(key) == 1, Warning, 'factor container should have only one mkt cap')
+        py_warning(len(key) == 1, Warning, 'factor container should have only one mkt cap')
         return self.data[key[0]]
 
     @property

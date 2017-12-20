@@ -7,7 +7,7 @@ import copy
 from sklearn.base import (BaseEstimator,
                           TransformerMixin)
 from sklearn_pandas import DataFrameMapper
-from PyFin.Utilities import pyFinAssert
+from xutils import py_assert
 from argcheck import preprocess
 from itertools import chain
 from alphaware.base import (ensure_factor_container,
@@ -117,7 +117,7 @@ class Selector(FactorEstimator):
         score = factor_container.score
         for date in factor_container.tiaocang_date:
             if self.method == SelectionMethod.INDUSTRY_NEUTRAL:
-                pyFinAssert(self.industry_weight is not None, ValueError, 'industry weight has not been given')
+                py_assert(self.industry_weight is not None, ValueError, 'industry weight has not been given')
                 industry_weight = self.industry_weight.loc[date]
                 data_mapper = [([score.name, industry_code.name],
                                 IndustryNeutralSelector(industry_weight=industry_weight,

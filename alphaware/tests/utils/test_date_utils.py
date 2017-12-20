@@ -5,7 +5,7 @@ from parameterized import parameterized
 from datetime import datetime as dt
 import pandas as pd
 from pandas.util.testing import assert_series_equal
-from PyFin.Enums import (BizDayConventions,
+from xutils.date_utils import (BizDayConventions,
                          Weekdays)
 from alphaware.utils import (map_to_biz_day,
                              get_tiaocang_date)

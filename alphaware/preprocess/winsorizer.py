@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from PyFin.Utilities import pyFinWarning
+from xutils import py_warning
 from sklearn_pandas import DataFrameMapper
 from sklearn.utils import check_array
 from sklearn.base import (BaseEstimator,
@@ -13,7 +13,7 @@ from ..enums import FactorType
 
 class Winsorizer(BaseEstimator, TransformerMixin):
     def __init__(self, quantile_range=(2.5, 97.5), copy=True):
-        pyFinWarning(quantile_range[0] >= 1 and quantile_range[1] >= 1, Warning,
+        py_warning(quantile_range[0] >= 1 and quantile_range[1] >= 1, Warning,
                      'quantile_range value will be divided by 100 in calculation')
         self.quantile_range = quantile_range
         self.copy = copy

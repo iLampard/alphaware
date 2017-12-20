@@ -2,7 +2,7 @@
 
 import pandas as pd
 from copy import deepcopy
-from PyFin.Utilities import pyFinAssert
+from xutils import py_assert
 from ..base import (Factor,
                     FactorTransformer)
 from ..utils import weighted_rank
@@ -21,7 +21,7 @@ class FactorSimpleRank(FactorTransformer):
 
     def fit(self, factor_container, **kwargs):
         self.factor_name = factor_container.alpha_factor_col if self.factor_name is None else self.factor_name
-        pyFinAssert(set(self.factor_name).issubset(set(factor_container.alpha_factor_col)), ValueError,
+        py_assert(set(self.factor_name).issubset(set(factor_container.alpha_factor_col)), ValueError,
                     'factor_name must be one of alpha factors in factor container')
         nb_factor = len(self.factor_name)
         self.weight = [1.0 / nb_factor] * nb_factor if self.weight is None else self.weight

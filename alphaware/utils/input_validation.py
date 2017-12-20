@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 from argcheck import expect_types
-from PyFin.DateUtilities import Date
+from xutils.date_utils import Date
 from empyrical import cum_returns
 from ..enums import (OutputDataFormat,
                      ReturnType)
