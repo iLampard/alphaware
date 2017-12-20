@@ -5,7 +5,6 @@ logbook
 scipy
 toolz
 argcheck
-Finance-Python
 empyrical
 parameterized
 scikit-learn
